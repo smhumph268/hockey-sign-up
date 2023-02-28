@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from decouple import config, Csv
 
+import users.apps
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,6 +32,8 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 # naive cast: cast=lambda v: [s.strip() for s in v.split(',')]
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+#
+LOGIN_REDIRECT_URL = 'users:home'
 
 # Application definition
 
@@ -40,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'users.apps.UsersConfig'
 ]
 
 MIDDLEWARE = [

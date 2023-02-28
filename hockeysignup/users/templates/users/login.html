@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users Login</title>
+</head>
+<body>
+    <h3>login</h3>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+            <p>{{ field.label }}: <br> {{ field }}</p>
+        {% endfor %}
+        <button type="submit">Login</button>
+    </form>
+
+    <p>Don't have an account? <a href="{% url 'users:register' %}">Signup here</a></p>
+</body>
+</html>
