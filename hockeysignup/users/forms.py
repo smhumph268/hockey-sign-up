@@ -1,13 +1,21 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UsernameField
+from .models import CustomUser
 
 
 class UserRegistrationForm(UserCreationForm):
-    first_name = forms.CharField(max_length=101)
-    last_name = forms.CharField(max_length=101)
-    email = forms.EmailField()
+    email = forms.EmailField(max_length=254, required=True)
+    username = forms.CharField(max_length=30)
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
 
     class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+        model = CustomUser
+        fields = ['email', 'username', 'first_name', 'last_name', 'password1', 'password2']
+
+
+class CustomLoginForm(AuthenticationForm):
+    username = UsernameField(
+        label='Email/Username',
+        widget=forms.TextInput(attrs={'autofocus': True})
+    )

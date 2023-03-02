@@ -1,17 +1,18 @@
 from django.contrib.auth import views
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.urls import reverse
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, CustomLoginForm
 
 
 class UserLoginView(views.LoginView):
+    authentication_form = CustomLoginForm
     template_name = 'users/login.html'
 
 
 class UserLogoutView(views.LogoutView):
-    template_name = 'users/login.html'
+    template_name = 'users/logout.html'
 
 
 def home(request):

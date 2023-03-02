@@ -13,14 +13,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from decouple import config, Csv
 
-import users.apps
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # I generated a new secret key using from django.core.management.utils, get_random_secret_key
@@ -32,11 +29,38 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 # naive cast: cast=lambda v: [s.strip() for s in v.split(',')]
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+# Override default user model
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# Loging Redirect
+LOGIN_REDIRECT_URL = 'home'
+
+ROOT_URLCONF = 'hockeysignup.urls'
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.1/howto/static-files/
+STATIC_URL = 'static/'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 #
-LOGIN_REDIRECT_URL = 'users:home'
+WSGI_APPLICATION = 'hockeysignup.wsgi.application'
+
+# Internationalization
+# https://docs.djangoproject.com/en/4.1/topics/i18n/
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = config('TIME_ZONE')
+USE_I18N = True
+USE_TZ = True
+
+AUTHENTICATION_BACKENDS = [
+    'hockeysignup.backends.CustomAuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -58,8 +82,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'hockeysignup.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -76,12 +98,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'hockeysignup.wsgi.application'
-
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -94,10 +112,8 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -112,26 +128,3 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = config('TIME_ZONE')
-
-USE_I18N = True
-
-USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
