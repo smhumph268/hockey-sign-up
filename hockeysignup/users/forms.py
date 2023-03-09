@@ -21,5 +21,5 @@ class CustomLoginForm(AuthenticationForm):
     )
 
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'autofocus': True, 'class': 'form-control form-control-lg'})
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'class': 'form-control form-control-lg'})
     )

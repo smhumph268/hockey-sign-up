@@ -22,6 +22,11 @@
                         {% for field in form %}
                             <p>{{ field.label }}: <br> {{ field }}</p>
                         {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-primary" role="alert">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
                         <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
                     </form>
                   </div>

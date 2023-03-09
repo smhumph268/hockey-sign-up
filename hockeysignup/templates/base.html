@@ -17,8 +17,8 @@
 		  <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 			<ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
 			  <li><a href="{% url 'users:home' %}" class="nav-link px-2 {% if request.path == '/' or request.path == '/users/' %}text-secondary{% else %}text-white{% endif %}">Home</a></li>
-			  <li><a href="#" class="nav-link px-2 text-white">Skates</a></li>
-			  <li><a href="#" class="nav-link px-2 text-white">My Skates</a></li>
+			  <li><a href="#" class="nav-link px-2 text-white">Drop-Ins</a></li>
+			  <li><a href="#" class="nav-link px-2 text-white">My Drop-Ins</a></li>
 			</ul>
 			<div class="text-end">
 			  {% if user.is_authenticated %}
