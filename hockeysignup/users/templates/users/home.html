@@ -1,21 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Users Home</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
     {% if user.is_authenticated %}
         <div class="alert alert-success" role="alert">
-            <h3>Welcome {{ user.username }}!</h3>
-            <a href="{% url 'users:logout' %}">Logout?</a>
+            <h3 style="text-align: center;">Welcome {{ user.username }}!</h3>
         </div>
     {% else %}
         <div class="alert alert-success" role="alert">
-            <h3>Welcome!</h3>
-            <a href="{% url 'users:register' %}">Signup</a>
-            <a href="{% url 'users:login' %}">Login</a>
+            <h3 style="text-align: center;">Welcome!</h3>
         </div>
     {% endif %}
-</body>
-</html>
+{% endblock content %}

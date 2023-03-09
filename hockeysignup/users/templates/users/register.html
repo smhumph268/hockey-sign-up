@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Registration</title>
-</head>
-<body>
-  <h3>Register here</h3>
-  <hr>
-  <form action="" method="POST">
+{% extends "base.html" %}
+{% block title %}614 Sign Up - Register{% endblock title %}
+{% block content %}
+  {% if user.is_authenticated %}
+    <h2 style="text-align: center;">Already logged in as {{user.username}}. Logout to register a new account.</h2>
+  {% else %}
+    <h3>Register here</h3>
+    <hr>
+    <form action="" method="POST">
     {% csrf_token %}
 
     {% for field in form %}
@@ -20,6 +19,6 @@
         </div>
     {% endfor %}
     <button type="submit">Register</button>
-</form>
-</body>
-</html>
+    </form>
+  {% endif %}
+{% endblock content %}

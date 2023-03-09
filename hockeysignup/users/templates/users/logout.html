@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Users Logout</title>
-</head>
-<body>
-    {% block content %}
-        <br>
-        <div class="alert alert-success" role="alert">
-            <h2 style="text-align: center;">Logged out!</h2>
-        </div>
-
-        <h3>Login again?</h3>
-        <a href="{% url 'users:login' %}">---> Login</a> <br>
-        <a href="{% url 'users:home' %}"><--- Or go back to home.</a>
-    {% endblock content %}
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}614 Sign Up - Logout{% endblock title %}
+{% block script %}
+  <script type="text/javascript">
+    setTimeout(function() {window.location.href = "{% url 'users:home' %}";}, 3000);
+  </script>
+{% endblock script %}
+{% block content %}
+  <br>
+  <div class="alert alert-success" role="alert">
+    <h2 style="text-align: center;">Logged out!</h2>
+    <p style="text-align: center;">Redirecting to home page...</p>
+  </div>
+{% endblock content %}
