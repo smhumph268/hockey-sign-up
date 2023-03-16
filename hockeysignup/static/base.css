@@ -313,6 +313,10 @@ button{
     border-radius:.375rem;
     transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out
 }
+.form-control.is-invalid,.was-validated .form-control:invalid{
+    border-color:var(--bs-danger)!important;
+    padding-right:calc(1.5em + .75rem);
+}
 @media (prefers-reduced-motion:reduce){
     .form-control{
         transition:none
@@ -564,11 +568,11 @@ button{
     border:var(--bs-alert-border);
     border-radius:var(--bs-alert-border-radius)
 }
-.alert-primary{
-    --bs-alert-color:var(--bs-primary-text);
-    --bs-alert-bg:var(--bs-primary-bg-subtle);
-    --bs-alert-border-color:var(--bs-primary-border-subtle);
-    --bs-alert-link-color:var(--bs-primary-text)
+.alert-danger{
+    --bs-alert-color:var(--bs-danger-text);
+    --bs-alert-bg:var(--bs-danger-bg-subtle);
+    --bs-alert-border-color:var(--bs-danger-border-subtle);
+    --bs-alert-link-color:var(--bs-danger-text)
 }
 .nav{
     --bs-nav-link-padding-x:1rem;
@@ -728,6 +732,9 @@ button{
 .text-secondary{
     --bs-text-opacity:1;
     color:rgba(var(--bs-secondary-rgb),var(--bs-text-opacity))!important
+}
+.text-danger{
+    --bs-text-opacity:1;color:rgba(var(--bs-danger-rgb),var(--bs-text-opacity))!important
 }
 .bg-dark{
     --bs-bg-opacity:1;

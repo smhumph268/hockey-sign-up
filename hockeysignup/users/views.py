@@ -27,8 +27,15 @@ def register(request):
 
             messages.success(request, f'Your account has been created. You can log in now!')
             return HttpResponseRedirect(reverse('users:login'))
+        else:
+            for field in form.errors:
+                form[field].field.widget.attrs['class'] += ' is-invalid'
     else:
         form = UserRegistrationForm()
+        # Append css class to every field that contains errors.
+        for field in form.errors:
+            form[field].field.widget.attrs['class'] += ' my-css-class'
+
 
     context = {'form': form}
     return render(request, 'users/register.html', context)

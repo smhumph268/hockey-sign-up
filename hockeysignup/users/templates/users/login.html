@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}614 Sign Up - Login{% endblock title %}
+{% block title %} - Login{% endblock title %}
 {% block content %}
   {% if user.is_authenticated %}
     <h2 style="text-align: center;">Already logged in as {{user.username}}</h2>
@@ -23,7 +23,7 @@
                             <p>{{ field.label }}: <br> {{ field }}</p>
                         {% endfor %}
                         {% for error in form.non_field_errors %}
-                            <div class="alert alert-primary" role="alert">
+                            <div class="alert alert-danger" role="alert">
                                 <strong>{{ error|escape }}</strong>
                             </div>
                         {% endfor %}
