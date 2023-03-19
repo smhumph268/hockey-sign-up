@@ -22,7 +22,7 @@
                             <div>
                                 <p {% if field.errors %}class="text-danger"{% endif %}>{{ field.label }}: <br> {{ field }}
                                 {% for error in field.errors %}
-                                    <small>{{ error }}</small>
+                                    <small>{{ error|escape }}</small>
                                 {% endfor %}
                                 </p>
                             </div>
@@ -32,6 +32,11 @@
                                 <strong>{{ error|escape }}</strong>
                             </div>
                         {% endfor %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Please resolve registration errors</strong>
+                            </div>
+                        {% endif %}
                     <button class="btn btn-outline-light btn-lg px-5" type="submit">Register</button>
                     </form>
                   </div>

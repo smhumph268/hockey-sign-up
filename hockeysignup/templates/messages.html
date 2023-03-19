@@ -4,7 +4,7 @@
       <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="messageClose{{ forloop.counter }}">
         <span aria-hidden="true">X</span>
       </button>
-      <strong>{{message}}</strong>
+      <strong>{{message|escape}}</strong>
     </div>
   </div>
   <script>
