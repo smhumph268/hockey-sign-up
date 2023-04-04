@@ -56,7 +56,7 @@ WSGI_APPLICATION = 'hockeysignup.wsgi.application'
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = config('TIME_ZONE')
 USE_I18N = True
-USE_TZ = True
+USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
     'hockeysignup.backends.CustomAuthenticationBackend',
@@ -72,7 +72,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'users.apps.UsersConfig'
+    'rangefilter',
+    'users.apps.UsersConfig',
+    'dropins.apps.DropinsConfig'
 ]
 
 MESSAGE_TAGS = {
