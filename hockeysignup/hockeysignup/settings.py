@@ -35,7 +35,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 AUTH_USER_MODEL = 'users.CustomUser'
 
 # Loging Redirect
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'index'
 
 ROOT_URLCONF = 'hockeysignup.urls'
 

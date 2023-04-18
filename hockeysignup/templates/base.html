@@ -8,15 +8,16 @@
 	<title>614 Sign Up{% block title %}{% endblock title %}</title>
 
     {% load static %}
+	{% block extra_css %}{% endblock extra_css %}
     <link rel="stylesheet" href="{% static 'base.css' %}">
-	{% block script %}{% endblock script %}
+	{% block extra_script_before_body %}{% endblock extra_script_before_body %}
 </head>
 <body>
 	<header class="p-3 text-bg-dark">
 		<div class="container">
 		  <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 			<ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-			  <li><a href="{% url 'users:home' %}" class="nav-link px-2 {% if request.path == '/' or request.path == '/users/' %}text-secondary{% else %}text-white{% endif %}">Home</a></li>
+			  <li><a href="{% url 'dropins:index' %}" class="nav-link px-2 {% if request.path == '/' or request.path == '/dropins/' %}text-secondary{% else %}text-white{% endif %}">Home</a></li>
 			  <li><a href="#" class="nav-link px-2 text-white">Drop-Ins</a></li>
 			  <li><a href="#" class="nav-link px-2 text-white">My Drop-Ins</a></li>
 			</ul>
@@ -36,5 +37,6 @@
 			{% block content %}{% endblock content %}
     	</div>
 	</main>
-  </body>
+</body>
+	{% block extra_script_after_body %}{% endblock extra_script_after_body %}
 </html>

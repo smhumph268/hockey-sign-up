@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %} - {{ drop_in }}{% endblock title %}
+{% load static %}
+{% block extra_css %}
+  <style>
+    .bordered-table{
+        border-spacing: 10px;
+    }
+    .list-group{
+        --bs-list-group-color:var(--bs-body-color);
+        --bs-list-group-bg:var(--bs-body-bg);
+        --bs-list-group-border-color:var(--bs-border-color);
+        --bs-list-group-border-width:var(--bs-border-width);
+        --bs-list-group-border-radius:var(--bs-border-radius);
+        --bs-list-group-item-padding-x:1rem;
+        --bs-list-group-item-padding-y:0.5rem;
+        --bs-list-group-action-color:var(--bs-secondary-color);
+        --bs-list-group-action-hover-color:var(--bs-emphasis-color);
+        --bs-list-group-action-hover-bg:var(--bs-tertiary-bg);
+        --bs-list-group-action-active-color:var(--bs-body-color);
+        --bs-list-group-action-active-bg:var(--bs-secondary-bg);
+        --bs-list-group-disabled-color:var(--bs-secondary-color);
+        --bs-list-group-disabled-bg:var(--bs-body-bg);
+        --bs-list-group-active-color:#fff;
+        --bs-list-group-active-bg:#0d6efd;
+        --bs-list-group-active-border-color:#0d6efd;
+        display:flex;
+        flex-direction:column;
+        padding-left:0;
+        margin-bottom:0;
+        min-height: 100px;
+        border-radius:var(--bs-list-group-border-radius)
+    }
+    .list-group-item{
+        position:relative;
+        display:block;
+        word-break: break-all;
+        padding:var(--bs-list-group-item-padding-y) var(--bs-list-group-item-padding-x);
+        color:var(--bs-list-group-color);
+        text-decoration:none;
+        background-color:var(--bs-list-group-bg);
+        border:var(--bs-list-group-border-width) solid var(--bs-list-group-border-color)
+    }
+    .list-group-item-action:active{
+        color:var(--bs-list-group-action-active-color);
+        background-color:var(--bs-list-group-action-active-bg)
+    }
+    .sortable-placeholder-border{
+        border-color:#F00;
+    }
+    .btn-primary{
+        --bs-btn-color:#fff!important;
+        --bs-btn-bg:#5c6370!important;
+        --bs-btn-border-color:#0d6efd;
+        --bs-btn-hover-color:#fff;
+        --bs-btn-hover-bg:#0b5ed7;
+        --bs-btn-hover-border-color:#0a58ca;
+        --bs-btn-focus-shadow-rgb:49,132,253;
+        --bs-btn-active-color:#fff;
+        --bs-btn-active-bg:#0a58ca;
+        --bs-btn-active-border-color:#0a53be;
+        --bs-btn-active-shadow:inset 0 3px 5px rgba(0, 0, 0, 0.125);
+        --bs-btn-disabled-color:#5c6370;
+        --bs-btn-disabled-bg:#0d6efd;
+        --bs-btn-disabled-border-color:#0d6efd
+    }
+    .btn-sm{
+        --bs-btn-padding-y:0.25rem;
+        --bs-btn-padding-x:0.5rem;
+        --bs-btn-font-size:0.875rem;
+        --bs-btn-border-radius:0.25rem
+    }
+  </style>
+{% endblock extra_css %}
+{% block extra_script_before_body %}
+  {% if user.is_superuser %}
+    <script src="{% static 'dropins/html5sortable.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  {% endif %}
+{% endblock extra_script_before_body %}
+{% block content %}
+<div class="container">
+  <div class="d-flex row justify-content-center align-items-center">
+    <h1 style="text-align:center">{{ drop_in }}</h1>
+
+    <table class="bordered-table">
+      <thead>
+        <tr>
+          <th>White Team</th>
+          <th>Dark Team</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <ul id="white-team" class="list-group justify-content-center align-items-center">
+              {% for signup in signups %}
+                {% if signup.isWhiteTeam == True and signup.rostered == True %}
+                  <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </td>
+          <td>
+            <ul id="dark-team" class="list-group justify-content-center align-items-center">
+              {% for signup in signups %}
+                {% if signup.isWhiteTeam == False and signup.rostered == True %}
+                  <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    {% if user.is_superuser %}
+      <table class="bordered-table">
+        <thead>
+          <tr>
+            <th>Unassigned Sign-Ups</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <ul id="unassigned-sign-ups" class="list-group justify-content-center align-items-center">
+                {% for signup in signups %}
+                  {% if signup.rostered == False %}
+                    <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      {% csrf_token %}
+      <div class="container-fluid p-0" id="message">
+        <div class="alert alert-dismissible" role="alert">
+          <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="messageClose">
+            <span aria-hidden="true">X</span>
+          </button>
+          <strong id="message-text"></strong>
+        </div>
+      </div>
+      <button id="save-button" class="btn btn-primary btn-sm" style="width:25%">Save Changes</button>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}
+{% block extra_script_after_body %}
+  {% if user.is_superuser %}
+    <script>
+      sortable('#unassigned-sign-ups', {
+        acceptFrom: '#white-team,#dark-team,#unassigned-sign-ups',
+        placeholderClass: 'list-group-item col-md-6 sortable-placeholder-border'
+      });
+      sortable('#white-team', {
+        acceptFrom: '#white-team,#dark-team,#unassigned-sign-ups',
+        placeholderClass: 'list-group-item col-md-6 sortable-placeholder-border'
+      });
+      sortable('#dark-team', {
+        acceptFrom: '#white-team,#dark-team,#unassigned-sign-ups',
+        placeholderClass: 'list-group-item col-md-6 sortable-placeholder-border'
+      });
+
+      $(document).ready(function() {
+        $("#message").hide();
+        // Add event listener to save changes
+        $('#save-button').click(function(){
+          // Extract player IDs from updated team rosters
+          var whiteTeam = $('#white-team').find('.list-group-item').map(function() {
+            return $(this).data('id');
+          }).get();
+
+          var darkTeam = $('#dark-team').find('.list-group-item').map(function() {
+            return $(this).data('id');
+          }).get();
+
+          var unassignedPlayers = $('#unassigned-sign-ups').find('.list-group-item').map(function() {
+            return $(this).data('id');
+          }).get();
+
+          // Make AJAX request to update model
+          $.ajax({
+            url: '{% url 'dropins:update_rosters' %}',
+            type: 'POST',
+            data: {
+              'drop_in_id': '{{ drop_in.id }}',
+              'white_team_sign_up_ids': whiteTeam,
+              'dark_team_sign_up_ids': darkTeam,
+              'unassigned_ids': unassignedPlayers,
+              csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val()
+            },
+            success: function(response) {
+              $("#message-text").text('Successfully saved rosters');
+              $('.alert').addClass('alert-success');
+              $("#message").show();
+            },
+            error: function(xhr, status, error) {
+              $("#message-text").text('Failed to save rosters');
+              $('.alert').addClass('alert-danger');
+              $("#message").show();
+            }
+          });
+        });
+      });
+
+      const targetDiv = document.getElementById("message");
+      const btn = document.getElementById("messageClose");
+      btn.onclick = function () {
+        if (targetDiv.style.display !== "none") {
+          targetDiv.style.display = "none";
+        } else {
+          targetDiv.style.display = "block";
+        }
+        if ($('.alert').hasClass('alert-danger')) {
+          $('.alert').removeClass('alert-danger');
+        }
+        if ($('.alert').hasClass('alert-success')) {
+          $('.alert').removeClass('alert-success');
+        }
+      };
+    </script>
+  {% endif %}
+{% endblock extra_script_after_body %}

@@ -3,10 +3,21 @@
     {% if user.is_authenticated %}
         <div class="alert alert-success" role="alert">
             <h3 style="text-align: center;">Welcome {{ user.username }}!</h3>
+            <p>Your next Drop-In:</p>
         </div>
     {% else %}
         <div class="alert alert-success" role="alert">
             <h3 style="text-align: center;">Welcome!</h3>
+            <p>Next Drop-In:</p>
         </div>
+    {% endif %}
+    {% if upcoming_dropins %}
+        <ul>
+        {% for dropin in upcoming_dropins %}
+            <li><a href="{% url 'dropins:detail' dropin.id %}">{{ dropin.name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No Upcoming Drop-Ins.</p>
     {% endif %}
 {% endblock content %}
