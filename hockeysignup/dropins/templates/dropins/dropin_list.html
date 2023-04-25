@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %} - Upcoming{% endblock title %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'dropins/dropins.css' %}">
+{% endblock extra_css %}
+{% block content %}
+    {% if upcoming_dropins %}
+        {% for dropin in upcoming_dropins %}
+            <div class="bg-light dropin-div">
+                <h1 class="display-4">{{ dropin.datetime }}</h1>
+                <p class="lead">{{ dropin.name }} | {{ dropin.rink }}</p>
+                <hr class="my-4">
+                <p>Click the button below to view rosters</p>
+                <p class="lead">
+                    <a class="btn btn-primary btn-lg" href="{% url 'dropins:detail' dropin.id %}" role="button">Rosters</a>
+                </p>
+            </div>
+        {% endfor %}
+        <nav class="page-navbar" aria-label="Drop-in page navigation">
+            <ul class="pagination pagination-lg justify-content-center">
+                {% if page_obj.has_other_pages %}
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                {{ page_obj.previous_page_number }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ page_obj.number }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                {{ page_obj.next_page_number }}
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a></li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <div class="bg-light dropin-div">
+            <h1 class="display-4">No upcoming drop-ins</h1>
+        </div>
+    {% endif %}
+{% endblock content %}

@@ -1,23 +1,36 @@
 {% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'dropins/dropins.css' %}">
+{% endblock extra_css %}
 {% block content %}
-    {% if user.is_authenticated %}
-        <div class="alert alert-success" role="alert">
-            <h3 style="text-align: center;">Welcome {{ user.username }}!</h3>
-            <p>Your next Drop-In:</p>
-        </div>
-    {% else %}
-        <div class="alert alert-success" role="alert">
-            <h3 style="text-align: center;">Welcome!</h3>
-            <p>Next Drop-In:</p>
-        </div>
-    {% endif %}
-    {% if upcoming_dropins %}
-        <ul>
-        {% for dropin in upcoming_dropins %}
-            <li><a href="{% url 'dropins:detail' dropin.id %}">{{ dropin.name }}</a></li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No Upcoming Drop-Ins.</p>
-    {% endif %}
+    <div class="alert alert-success" role="alert" style="width: 75%; text-align: center; word-break: break-all; margin: auto; margin-top: 25px;">
+        <h3 style="text-align: center;">Welcome{% if user.is_authenticated %} {{ user.username }}{% endif %}!</h3>
+    </div>
+    <div class="bg-light dropin-div">
+        <h1 class="display-4">
+            {% if upcoming_dropin %}
+                {% if user.is_authenticated %}Your next drop-in{% else %}Next drop-in{% endif %}:
+            {% else %}
+                {% if user.is_authenticated %}Sign up for drop ins{% else %}No upcoming drop-ins{% endif %}
+            {% endif %}
+        </h1>
+        {% if upcoming_dropin %}
+            {% with upcoming_dropin|first as dropin %}
+                <p class="lead">{{ dropin }}</p>
+                <hr class="my-4">
+                <p>Click the button below to view rosters</p>
+                <p class="lead">
+                    <a class="btn btn-primary btn-lg" href="{% url 'dropins:detail' dropin.id %}" role="button">Rosters</a>
+                </p>
+            {% endwith %}
+        {% else %}
+            {% if user.is_authenticated %}
+                <hr class="my-4">
+                <p class="lead">
+                    <a class="btn btn-primary btn-lg" href="{% url 'dropins:upcoming-dropins' %}" role="button">Drop-In Sign Up</a>
+                </p>
+            {% endif %}
+        {% endif %}
+    </div>
 {% endblock content %}

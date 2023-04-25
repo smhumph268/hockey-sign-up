@@ -18,8 +18,8 @@
 		  <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 			<ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
 			  <li><a href="{% url 'dropins:index' %}" class="nav-link px-2 {% if request.path == '/' or request.path == '/dropins/' %}text-secondary{% else %}text-white{% endif %}">Home</a></li>
-			  <li><a href="#" class="nav-link px-2 text-white">Drop-Ins</a></li>
-			  <li><a href="#" class="nav-link px-2 text-white">My Drop-Ins</a></li>
+			  <li><a href="{% url 'dropins:upcoming-dropins' %}" class="nav-link px-2 {% if request.path == '/dropins/list/upcoming/' %}text-secondary{% else %}text-white{% endif %}">Drop-Ins</a></li>
+			  {% if user.is_authenticated %}<li><a href="{% url 'dropins:my-upcoming-dropins' %}" class="nav-link px-2 {% if request.path == '/dropins/list/my-upcoming/' %}text-secondary{% else %}text-white{% endif %}">My Drop-Ins</a></li>{% endif %}
 			</ul>
 			<div class="text-end">
 			  {% if user.is_authenticated %}

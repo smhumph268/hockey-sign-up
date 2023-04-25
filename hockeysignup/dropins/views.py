@@ -9,7 +9,7 @@ from .models import DropIn, SignUp
 
 class IndexView(generic.ListView):
     template_name = 'dropins/index.html'
-    context_object_name = 'upcoming_dropins'
+    context_object_name = 'upcoming_dropin'
 
     def get_queryset(self):
         """
@@ -21,19 +21,56 @@ class IndexView(generic.ListView):
                 datetime__gte=timezone.now(),
                 visible=True,
                 id__in=rostered_signups.values_list('dropIn', flat=True)
-            ).order_by('-datetime')[:1]
+            ).order_by('datetime')[:1]
         else:
             return DropIn.objects.filter(
                 datetime__gte=timezone.now(),
                 visible=True
-            ).order_by('-datetime')[:1]
+            ).order_by('datetime')[:1]
+
+
+class ListUpcoming(generic.ListView):
+    template_name = 'dropins/dropin_list.html'
+    context_object_name = 'upcoming_dropins'
+    paginate_by = 5
+
+    def get_queryset(self):
+        """
+        Shows upcoming drop-ins.
+        """
+        return DropIn.objects.filter(
+            datetime__gte=timezone.now(),
+            visible=True
+        ).order_by('datetime')
+
+
+class ListMyUpcoming(generic.ListView):
+    template_name = 'dropins/dropin_list.html'
+    context_object_name = 'upcoming_dropins'
+    paginate_by = 5
+
+    def get_queryset(self):
+        """
+        Shows upcoming drop-ins for the user who is signed in.
+        """
+        if self.request.user.is_authenticated:
+            rostered_signups = SignUp.objects.filter(user=self.request.user, rostered=True)
+            return DropIn.objects.filter(
+                datetime__gte=timezone.now(),
+                visible=True,
+                id__in=rostered_signups.values_list('dropIn', flat=True)
+            ).order_by('datetime')
+        else:
+            return DropIn.objects.filter(
+                datetime__gte=timezone.now(),
+                visible=True
+            ).order_by('datetime')
 
 
 def single_drop_in_detail_view(request, drop_in_id):
     drop_in = get_object_or_404(DropIn, pk=drop_in_id)
     signups = SignUp.objects.filter(dropIn=drop_in_id)
-    # TODO: render different page if user is super user?
-    return render(request, 'dropins/dropinDetail.html', {'drop_in': drop_in, 'signups': signups})
+    return render(request, 'dropins/dropin_detail.html', {'drop_in': drop_in, 'signups': signups})
 
 
 def update_rosters(request):
