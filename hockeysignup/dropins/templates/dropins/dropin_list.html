@@ -1,20 +1,44 @@
 {% extends "base.html" %}
-{% block title %} - Upcoming{% endblock title %}
+{% block title %} - Drop Ins{% endblock title %}
 {% load static %}
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'dropins/dropins.css' %}">
 {% endblock extra_css %}
+{% block extra_script_before_body %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+{% endblock extra_script_before_body %}
 {% block content %}
-    {% if upcoming_dropins %}
-        {% for dropin in upcoming_dropins %}
+    {% if page_obj %}
+        {% for dropin in page_obj %}
             <div class="bg-light dropin-div">
                 <h1 class="display-4">{{ dropin.datetime }}</h1>
                 <p class="lead">{{ dropin.name }} | {{ dropin.rink }}</p>
                 <hr class="my-4">
-                <p>Click the button below to view rosters</p>
-                <p class="lead">
-                    <a class="btn btn-primary btn-lg" href="{% url 'dropins:detail' dropin.id %}" role="button">Rosters</a>
+                <p>Click the button below to view details</p>
+                {% if user.is_authenticated %}
+                    <div id="sign-up-as-goalie-div-{{ dropin.id }}"><p>Sign up as a goalie <input type="checkbox" id="sign-up-as-goalie-{{ dropin.id }}" /></p></div>
+                {% endif %}
+                <p class="lead button-row">
+                    <a class="btn btn-primary btn-lg" href="{% url 'dropins:detail' dropin.id %}" role="button">
+                        Details
+                    </a>
                 </p>
+                {% if user.is_authenticated %}
+                    {% csrf_token %}
+                    <p class="lead button-row">
+                        <a id="sign-up-toggle-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">
+                            {% if dropin.id in users_drop_ins %}Withdraw{% else %}Sign Up{% endif %}
+                        </a>
+                    </p>
+                    <div class="container-fluid p-0" id="message-{{ dropin.id }}">
+                        <div class="alert alert-dismissible" role="alert" id="message-div-{{ dropin.id }}">
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="message-close-{{ dropin.id }}">
+                                <span aria-hidden="true">X</span>
+                            </button>
+                            <strong id="message-text-{{ dropin.id }}"></strong>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
         <nav class="page-navbar" aria-label="Drop-in page navigation">
@@ -44,7 +68,14 @@
         </nav>
     {% else %}
         <div class="bg-light dropin-div">
-            <h1 class="display-4">No upcoming drop-ins</h1>
+            <h1 class="display-4">No{% if user.is_authenticated %}t rostered for{% endif %} upcoming drop-ins</h1>
         </div>
     {% endif %}
 {% endblock content %}
+{% block extra_script_after_body %}
+    <script>
+        var usersDropInsJson = {{ users_drop_ins_json|safe }}
+        var toggleSignUpURL = '{% url 'dropins:toggle-signup' %}'
+    </script>
+    <script type="text/javascript" src="{% static 'dropins/dropins.js' %}"></script>
+{% endblock extra_script_after_body %}

@@ -81,7 +81,7 @@
             <ul id="white-team" class="list-group justify-content-center align-items-center">
               {% for signup in signups %}
                 {% if signup.isWhiteTeam == True and signup.rostered == True %}
-                  <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}</li>
+                  <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}{% if signup.isGoalie == True %} (G){% endif %}</li>
                 {% endif %}
               {% endfor %}
             </ul>
@@ -90,7 +90,7 @@
             <ul id="dark-team" class="list-group justify-content-center align-items-center">
               {% for signup in signups %}
                 {% if signup.isWhiteTeam == False and signup.rostered == True %}
-                  <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}</li>
+                  <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}{% if signup.isGoalie == True %} (G){% endif %}</li>
                 {% endif %}
               {% endfor %}
             </ul>
@@ -112,7 +112,7 @@
               <ul id="unassigned-sign-ups" class="list-group justify-content-center align-items-center">
                 {% for signup in signups %}
                   {% if signup.rostered == False %}
-                    <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}</li>
+                    <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}{% if signup.isGoalie == True %} (G){% endif %}</li>
                   {% endif %}
                 {% endfor %}
               </ul>
@@ -173,7 +173,6 @@
             url: '{% url 'dropins:update-rosters' %}',
             type: 'POST',
             data: {
-              'drop_in_id': '{{ drop_in.id }}',
               'white_team_sign_up_ids': whiteTeam,
               'dark_team_sign_up_ids': darkTeam,
               'unassigned_ids': unassignedPlayers,
@@ -196,17 +195,17 @@
       const targetDiv = document.getElementById("message");
       const btn = document.getElementById("messageClose");
       btn.onclick = function () {
-        if (targetDiv.style.display !== "none") {
-          targetDiv.style.display = "none";
-        } else {
-          targetDiv.style.display = "block";
-        }
-        if ($('.alert').hasClass('alert-danger')) {
-          $('.alert').removeClass('alert-danger');
-        }
-        if ($('.alert').hasClass('alert-success')) {
-          $('.alert').removeClass('alert-success');
-        }
+          if (targetDiv.style.display !== "none") {
+              targetDiv.style.display = "none";
+          } else {
+              targetDiv.style.display = "block";
+          }
+          if ($('.alert').hasClass('alert-danger')) {
+              $('.alert').removeClass('alert-danger');
+          }
+          if ($('.alert').hasClass('alert-success')) {
+              $('.alert').removeClass('alert-success');
+          }
       };
     </script>
   {% endif %}

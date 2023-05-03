@@ -20,6 +20,7 @@
 			  <li><a href="{% url 'dropins:index' %}" class="nav-link px-2 {% if request.path == '/' or request.path == '/dropins/' %}text-secondary{% else %}text-white{% endif %}">Home</a></li>
 			  <li><a href="{% url 'dropins:upcoming-dropins' %}" class="nav-link px-2 {% if request.path == '/dropins/list/upcoming/' %}text-secondary{% else %}text-white{% endif %}">Drop-Ins</a></li>
 			  {% if user.is_authenticated %}<li><a href="{% url 'dropins:my-upcoming-dropins' %}" class="nav-link px-2 {% if request.path == '/dropins/list/my-upcoming/' %}text-secondary{% else %}text-white{% endif %}">My Drop-Ins</a></li>{% endif %}
+			  {% if user.is_superuser %}<li><a href="{% url 'admin:index' %}" class="nav-link px-2 text-white">Admin</a></li>{% endif %}
 			</ul>
 			<div class="text-end">
 			  {% if user.is_authenticated %}

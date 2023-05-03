@@ -20,6 +20,10 @@
     margin-top:1.5rem!important;
     margin-bottom:1.5rem!important
 }
+.alert{
+    --bs-alert-margin-top:1rem;
+    margin-top:var(--bs-alert-margin-top);
+}
 .btn-primary{
     --bs-btn-color:#fff!important;
     --bs-btn-bg:#5c6370!important;
@@ -35,6 +39,9 @@
     --bs-btn-disabled-color:#5c6370;
     --bs-btn-disabled-bg:#0d6efd;
     --bs-btn-disabled-border-color:#0d6efd
+}
+.button-row{
+    display: inline;
 }
 .dropin-div{
     padding: 20px;

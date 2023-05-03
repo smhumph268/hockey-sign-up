@@ -1,6 +1,9 @@
 from django.shortcuts import get_object_or_404, render
+from django.core.paginator import Paginator
+from django.core import serializers
 from django.db import transaction
 from django.views import generic
+from django.views.decorators.cache import never_cache
 from django.utils import timezone
 from django.http import JsonResponse
 
@@ -29,42 +32,88 @@ class IndexView(generic.ListView):
             ).order_by('datetime')[:1]
 
 
-class ListUpcoming(generic.ListView):
-    template_name = 'dropins/dropin_list.html'
-    context_object_name = 'upcoming_dropins'
-    paginate_by = 5
+# never_cache prevents things like 'Sign Up' up button staying as displaying 'Sign Up' after the user navigates to
+# details page and then back to list page. Could cause greater server load/data usage.
+@never_cache
+def list_upcoming(request):
+    """
+    Shows upcoming drop-ins. Passing in the user's signups as well so that we can show buttons to sign up or
+    withdraw from a drop-in.
+    """
+    drop_ins = DropIn.objects.filter(
+        datetime__gte=timezone.now(),
+        visible=True
+    ).order_by('datetime')
+    paginator = Paginator(drop_ins, 5)  # Show 5 drop-ins per page.
 
-    def get_queryset(self):
-        """
-        Shows upcoming drop-ins.
-        """
-        return DropIn.objects.filter(
-            datetime__gte=timezone.now(),
-            visible=True
-        ).order_by('datetime')
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    if request.user.is_authenticated:
+        users_drop_ins = SignUp.objects.filter(
+            user=request.user,
+            dropIn__in=drop_ins.values_list('id', flat=True)
+        )
+
+        return render(
+            request,
+            'dropins/dropin_list.html',
+            {
+              "page_obj": page_obj,
+              'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True),
+              'users_drop_ins_json': serializers.serialize('json', users_drop_ins, fields=('dropIn'))
+            }
+        )
+    else:
+        return render(
+            request,
+            'dropins/dropin_list.html',
+            {
+                "page_obj": page_obj
+            }
+        )
 
 
-class ListMyUpcoming(generic.ListView):
-    template_name = 'dropins/dropin_list.html'
-    context_object_name = 'upcoming_dropins'
-    paginate_by = 5
+@never_cache
+def list_my_upcoming(request):
+    """
+    Shows upcoming drop-ins that a user is signed up and rostered for. Passing in the user's signups as well so that we
+    can show buttons to sign up or withdraw from a drop-in.
+    """
+    rostered_signups = SignUp.objects.filter(user=request.user, rostered=True)
+    drop_ins = DropIn.objects.filter(
+        datetime__gte=timezone.now(),
+        visible=True,
+        id__in=rostered_signups.values_list('dropIn', flat=True)
+    ).order_by('datetime')
+    paginator = Paginator(drop_ins, 5)  # Show 5 drop-ins per page.
 
-    def get_queryset(self):
-        """
-        Shows upcoming drop-ins for the user who is signed in.
-        """
-        if self.request.user.is_authenticated:
-            rostered_signups = SignUp.objects.filter(user=self.request.user, rostered=True)
-            return DropIn.objects.filter(
-                datetime__gte=timezone.now(),
-                visible=True,
-                id__in=rostered_signups.values_list('dropIn', flat=True)
-            ).order_by('datetime')
-        else:
-            return DropIn.objects.filter(
-                datetime__gte=timezone.now(),
-                visible=True
-            ).order_by('datetime')
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    if request.user.is_authenticated:
+        users_drop_ins = SignUp.objects.filter(
+            user=request.user,
+            dropIn__in=drop_ins.values_list('id', flat=True)
+        )
+
+        return render(
+            request,
+            'dropins/dropin_list.html',
+            {
+                "page_obj": page_obj,
+                'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True),
+                'users_drop_ins_json': serializers.serialize('json', users_drop_ins, fields=('dropIn'))
+            }
+        )
+    else:
+        return render(
+            request,
+            'dropins/dropin_list.html',
+            {
+                "page_obj": page_obj
+            }
+        )
 
 
 def single_drop_in_detail_view(request, drop_in_id):
@@ -75,7 +124,6 @@ def single_drop_in_detail_view(request, drop_in_id):
 
 def update_rosters(request):
     if request.method == 'POST':
-        drop_in_id = request.POST.get('drop_in_id')
         white_team_sign_up_ids = request.POST.getlist('white_team_sign_up_ids[]')
         dark_team_sign_up_ids = request.POST.getlist('dark_team_sign_up_ids[]')
         unassigned_ids = request.POST.getlist('unassigned_ids[]')
@@ -101,5 +149,28 @@ def update_rosters(request):
                 player_signup.save()
 
         return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
+
+
+def toggle_signup(request):
+    if request.method == 'POST':
+        drop_in = get_object_or_404(DropIn, pk=request.POST.get('dropInToToggle'))
+        user_signups_for_drop_in = SignUp.objects.filter(user=request.user.id, dropIn=drop_in.id)
+        action = 'signed up'
+
+        if user_signups_for_drop_in:
+            user_signups_for_drop_in.delete()
+            action = 'withdrew'
+        else:
+            new_sign_up = SignUp(
+                user=request.user,
+                dropIn=drop_in,
+                datetime=timezone.now(),
+                isGoalie=request.POST.get('asGoalie') == 'true'
+            )
+            new_sign_up.save()
+
+        return JsonResponse({'success': True, 'text': 'Successfully '+action})
     else:
         return JsonResponse({'success': False})

@@ -16,7 +16,7 @@ class Rink(models.Model):
 
 class DropIn(models.Model):
     rink = models.ForeignKey(Rink, on_delete=models.PROTECT)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, help_text='Name of the drop-in as appears on the Chiller website')
     datetime = models.DateTimeField('drop in datetime')
     visible = models.BooleanField(default=False, help_text='Makes this drop-in visible on the website for users')
 

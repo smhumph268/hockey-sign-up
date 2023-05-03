@@ -19,9 +19,9 @@
             {% with upcoming_dropin|first as dropin %}
                 <p class="lead">{{ dropin }}</p>
                 <hr class="my-4">
-                <p>Click the button below to view rosters</p>
-                <p class="lead">
-                    <a class="btn btn-primary btn-lg" href="{% url 'dropins:detail' dropin.id %}" role="button">Rosters</a>
+                <p>Click the button below to view details</p>
+                <p class="lead button-row">
+                    <a class="btn btn-primary btn-lg" href="{% url 'dropins:detail' dropin.id %}" role="button">Details</a>
                 </p>
             {% endwith %}
         {% else %}
