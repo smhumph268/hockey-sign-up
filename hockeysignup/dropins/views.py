@@ -1,9 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator
-from django.core import serializers
 from django.db import transaction
 from django.views import generic
-from django.views.decorators.cache import never_cache
 from django.utils import timezone
 from django.http import JsonResponse
 
@@ -32,9 +30,6 @@ class IndexView(generic.ListView):
             ).order_by('datetime')[:1]
 
 
-# never_cache prevents things like 'Sign Up' up button staying as displaying 'Sign Up' after the user navigates to
-# details page and then back to list page. Could cause greater server load/data usage.
-@never_cache
 def list_upcoming(request):
     """
     Shows upcoming drop-ins. Passing in the user's signups as well so that we can show buttons to sign up or
@@ -60,8 +55,7 @@ def list_upcoming(request):
             'dropins/dropin_list.html',
             {
               "page_obj": page_obj,
-              'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True),
-              'users_drop_ins_json': serializers.serialize('json', users_drop_ins, fields=('dropIn'))
+              'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True)
             }
         )
     else:
@@ -74,7 +68,6 @@ def list_upcoming(request):
         )
 
 
-@never_cache
 def list_my_upcoming(request):
     """
     Shows upcoming drop-ins that a user is signed up and rostered for. Passing in the user's signups as well so that we
@@ -102,8 +95,7 @@ def list_my_upcoming(request):
             'dropins/dropin_list.html',
             {
                 "page_obj": page_obj,
-                'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True),
-                'users_drop_ins_json': serializers.serialize('json', users_drop_ins, fields=('dropIn'))
+                'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True)
             }
         )
     else:

@@ -1,10 +1,13 @@
 $(document).ready(function() {
     var allSignUpButtons = document.querySelectorAll('a[id^=sign-up-toggle-]');
+
     // Add event listener to save changes
     for (var i = 0; i < allSignUpButtons.length; i++) {
         var dropIn = allSignUpButtons[i].id.replace("sign-up-toggle-", "");
         $("#message-"+dropIn).hide();
-        if (usersDropInsJson.some(user_drop_in => user_drop_in.fields.dropIn == dropIn)) {
+        // Get sign up text button text value from session storage if it's in there, otherwise original page value
+        $("#sign-up-toggle-"+dropIn).text(sessionStorage.getItem('sign-up-toggle-'+dropIn) || allSignUpButtons[i].text.trim());
+        if ($("#sign-up-toggle-"+dropIn).text() == 'Withdraw') {
             $("#sign-up-as-goalie-div-"+dropIn).hide();
         }
         allSignUpButtons[i].addEventListener('click', function() {
@@ -45,10 +48,12 @@ $(document).ready(function() {
                     $("#message-"+dropIn).show();
                     if (response.text == 'Successfully signed up') {
                         $("#sign-up-toggle-"+dropIn).text('Withdraw');
+                        sessionStorage.setItem('sign-up-toggle-'+dropIn, 'Withdraw')
                         $("#sign-up-as-goalie-div-"+dropIn).hide();
                     }
                     else {
                         $("#sign-up-toggle-"+dropIn).text('Sign Up');
+                        sessionStorage.setItem('sign-up-toggle-'+dropIn, 'Sign Up')
                         $("#sign-up-as-goalie-div-"+dropIn).show();
                     }
                 },

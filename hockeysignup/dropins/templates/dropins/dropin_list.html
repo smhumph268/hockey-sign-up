@@ -74,7 +74,6 @@
 {% endblock content %}
 {% block extra_script_after_body %}
     <script>
-        var usersDropInsJson = {{ users_drop_ins_json|safe }}
         var toggleSignUpURL = '{% url 'dropins:toggle-signup' %}'
     </script>
     <script type="text/javascript" src="{% static 'dropins/dropins.js' %}"></script>
