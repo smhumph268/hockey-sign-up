@@ -17,13 +17,13 @@ $(document).ready(function() {
                 asGoalie = $('#sign-up-as-goalie-'+dropIn).is(":checked")
             }
 
-            const targetDiv = document.getElementById("message-"+dropIn);
+            const dropInMessageDiv = document.getElementById("message-"+dropIn);
             const btn = document.getElementById("message-close-"+dropIn);
             btn.onclick = function () {
-                if (targetDiv.style.display !== "none") {
-                    targetDiv.style.display = "none";
+                if (dropInMessageDiv.style.display !== "none") {
+                    dropInMessageDiv.style.display = "none";
                 } else {
-                    targetDiv.style.display = "block";
+                    dropInMessageDiv.style.display = "block";
                 }
                 if ($('#message-div-'+dropIn).hasClass('alert-danger')) {
                     $('#message-div-'+dropIn).removeClass('alert-danger');
@@ -47,15 +47,14 @@ $(document).ready(function() {
                     $("#message-div-"+dropIn).addClass('alert-success');
                     $("#message-"+dropIn).show();
                     if (response.text == 'Successfully signed up') {
-                        $("#sign-up-toggle-"+dropIn).text('Withdraw');
                         sessionStorage.setItem('sign-up-toggle-'+dropIn, 'Withdraw')
                         $("#sign-up-as-goalie-div-"+dropIn).hide();
                     }
                     else {
-                        $("#sign-up-toggle-"+dropIn).text('Sign Up');
                         sessionStorage.setItem('sign-up-toggle-'+dropIn, 'Sign Up')
                         $("#sign-up-as-goalie-div-"+dropIn).show();
                     }
+                    $("#sign-up-toggle-"+dropIn).text(sessionStorage.getItem('sign-up-toggle-'+dropIn));
                 },
                 error: function(xhr, status, error) {
                     $("#message-text-"+dropIn).text('Failed to change sign up status');

@@ -3,6 +3,9 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'dropins/dropins.css' %}">
 {% endblock extra_css %}
+{% block extra_script_before_body %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+{% endblock extra_script_before_body %}
 {% block content %}
     <div class="alert alert-success" role="alert" style="width: 75%; text-align: center; word-break: break-all; margin: auto; margin-top: 25px;">
         <h3 style="text-align: center;">Welcome{% if user.is_authenticated %} {{ user.username }}{% endif %}!</h3>
@@ -12,21 +15,44 @@
             {% if upcoming_dropin %}
                 {% if user.is_authenticated %}Your next drop-in{% else %}Next drop-in{% endif %}:
             {% else %}
-                {% if user.is_authenticated %}Sign up for drop ins{% else %}No upcoming drop-ins{% endif %}
+                {% if user.is_authenticated %}Not rostered for upcoming drop-ins{% else %}No upcoming drop-ins{% endif %}
             {% endif %}
         </h1>
         {% if upcoming_dropin %}
             {% with upcoming_dropin|first as dropin %}
                 <p class="lead">{{ dropin }}</p>
                 <hr class="my-4">
-                <p>Click the button below to view details</p>
+                <p>Click the button below to view details{% if user.is_authenticated %} and sign up or withdraw{% endif %}</p>
+                {% if user.is_authenticated %}
+                    <div id="sign-up-as-goalie-div-{{ dropin.id }}"><p>Sign up as a goalie <input type="checkbox" id="sign-up-as-goalie-{{ dropin.id }}" /></p></div>
+                {% endif %}
                 <p class="lead button-row">
                     <a class="btn btn-primary btn-lg" href="{% url 'dropins:detail' dropin.id %}" role="button">Details</a>
                 </p>
+                {% if user.is_authenticated %}
+                    {% csrf_token %}
+                    <p class="lead button-row">
+                        <a id="sign-up-toggle-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">
+                            Withdraw
+                        </a>
+                    </p>
+                    <div class="container-fluid p-0" id="message-{{ dropin.id }}">
+                        <div class="alert alert-dismissible" role="alert" id="message-div-{{ dropin.id }}">
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="message-close-{{ dropin.id }}">
+                                <span aria-hidden="true">X</span>
+                            </button>
+                            <strong id="message-text-{{ dropin.id }}"></strong>
+                        </div>
+                    </div>
+                {% endif %}
             {% endwith %}
         {% else %}
             {% if user.is_authenticated %}
                 <hr class="my-4">
+                <p>
+                    You are not rostered for any drop-ins. If you have signed up for any drop-ins, they will appear in
+                    the 'My Drop-Ins' tab if you become rostered.
+                </p>
                 <p class="lead">
                     <a class="btn btn-primary btn-lg" href="{% url 'dropins:upcoming-dropins' %}" role="button">Drop-In Sign Up</a>
                 </p>
@@ -34,3 +60,9 @@
         {% endif %}
     </div>
 {% endblock content %}
+{% block extra_script_after_body %}
+    <script>
+        var toggleSignUpURL = '{% url 'dropins:toggle-signup' %}'
+    </script>
+    <script type="text/javascript" src="{% static 'dropins/dropins.js' %}"></script>
+{% endblock extra_script_after_body %}

@@ -84,6 +84,7 @@ def list_my_upcoming(request):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
+    # Only visitors who are signed in should be able to see the link to this page
     if request.user.is_authenticated:
         users_drop_ins = SignUp.objects.filter(
             user=request.user,
