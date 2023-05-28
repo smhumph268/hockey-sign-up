@@ -136,3 +136,6 @@
     --bs-pagination-font-size:1.25rem;
     --bs-pagination-border-radius:0.5rem
 }
+.payment-buttons{
+    display: inline;
+}

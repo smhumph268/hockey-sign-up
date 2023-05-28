@@ -23,9 +23,13 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, max_length=100)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
+    credits = models.IntegerField(default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     def __str__(self):
         return self.email
+
+    def has_credits(self):
+        return self.credits > 0

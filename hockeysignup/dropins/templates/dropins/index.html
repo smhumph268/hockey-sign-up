@@ -66,6 +66,8 @@
 {% block extra_script_after_body %}
     <script>
         var toggleSignUpURL = '{% url 'dropins:toggle-signup' %}'
+        var payWithPayPalURL = '{% url 'dropins:pay-paypal' %}'
+        var payWithCreditsURL = '{% url 'dropins:pay-credits' %}'
     </script>
     <script type="text/javascript" src="{% static 'dropins/dropins.js' %}"></script>
 {% endblock extra_script_after_body %}
