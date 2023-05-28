@@ -2,8 +2,8 @@
 {% block title %} - {{ drop_in }}{% endblock title %}
 {% load static %}
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'dropins/dropins.css' %}">
-  <style>
+<link rel="stylesheet" href="{% static 'dropins/dropins.css' %}">
+<style>
     .bordered-table{
         border-spacing: 10px;
     }
@@ -55,158 +55,100 @@
         --bs-btn-font-size:0.875rem;
         --bs-btn-border-radius:0.25rem
     }
-  </style>
+</style>
 {% endblock extra_css %}
 {% block extra_script_before_body %}
-  {% if user.is_superuser %}
-    <script src="{% static 'dropins/html5sortable.min.js' %}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  {% endif %}
+    {% if user.is_superuser %}
+        <script src="{% static 'dropins/html5sortable.min.js' %}"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    {% endif %}
 {% endblock extra_script_before_body %}
 {% block content %}
 <div class="container">
-  <div class="d-flex row justify-content-center align-items-center">
-    <h1 style="text-align:center">{{ drop_in }}</h1>
+    <div class="d-flex row justify-content-center align-items-center">
+        <h1 style="text-align:center">{{ drop_in }}</h1>
 
-    <table class="bordered-table">
-      <thead>
-        <tr>
-          <th>White Team</th>
-          <th>Dark Team</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <ul id="white-team" class="list-group justify-content-center align-items-center">
-              {% for signup in signups %}
-                {% if signup.isWhiteTeam == True and signup.rostered == True %}
-                  <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}{% if signup.isGoalie == True %} (G){% endif %}</li>
-                {% endif %}
-              {% endfor %}
-            </ul>
-          </td>
-          <td>
-            <ul id="dark-team" class="list-group justify-content-center align-items-center">
-              {% for signup in signups %}
-                {% if signup.isWhiteTeam == False and signup.rostered == True %}
-                  <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}{% if signup.isGoalie == True %} (G){% endif %}</li>
-                {% endif %}
-              {% endfor %}
-            </ul>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <table class="bordered-table">
+            <thead>
+            <tr>
+                <th>White Team</th>
+                <th>Dark Team</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <ul id="white-team" class="list-group justify-content-center align-items-center">
+                        {% for signup in signups %}
+                            {% if signup.isWhiteTeam == True and signup.rostered == True %}
+                                <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
+                                    {{ signup.user.first_name }} {{ signup.user.last_name }}
+                                    {% if signup.isGoalie == True %} (G){% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    <ul id="dark-team" class="list-group justify-content-center align-items-center">
+                        {% for signup in signups %}
+                            {% if signup.isWhiteTeam == False and signup.rostered == True %}
+                                <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
+                                    {{ signup.user.first_name }} {{ signup.user.last_name }}
+                                    {% if signup.isGoalie == True %} (G){% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
 
-    {% if user.is_superuser %}
-      <table class="bordered-table">
-        <thead>
-          <tr>
-            <th>Unassigned Sign-Ups</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <ul id="unassigned-sign-ups" class="list-group justify-content-center align-items-center">
-                {% for signup in signups %}
-                  {% if signup.rostered == False %}
-                    <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">{{ signup.user.first_name }} {{ signup.user.last_name }}{% if signup.isGoalie == True %} (G){% endif %}</li>
-                  {% endif %}
-                {% endfor %}
-              </ul>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        {% if user.is_superuser %}
+        <table class="bordered-table">
+            <thead>
+            <tr>
+                <th>Unassigned Sign-Ups</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <ul id="unassigned-sign-ups" class="list-group justify-content-center align-items-center">
+                        {% for signup in signups %}
+                            {% if signup.rostered == False %}
+                                <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
+                                    {{ signup.user.first_name }} {{ signup.user.last_name }}
+                                    {% if signup.isGoalie == True %} (G){% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
 
-      {% csrf_token %}
-      <div class="container-fluid p-0" id="message">
-        <div class="alert alert-dismissible" role="alert">
-          <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="messageClose">
-            <span aria-hidden="true">X</span>
-          </button>
-          <strong id="message-text"></strong>
+        {% csrf_token %}
+        <div class="container-fluid p-0" id="message">
+            <div class="alert alert-dismissible" role="alert">
+                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="messageClose">
+                    <span aria-hidden="true">X</span>
+                </button>
+                <strong id="message-text"></strong>
+            </div>
         </div>
-      </div>
-      <button id="save-button" class="btn btn-primary btn-sm" style="width:25%">Save Changes</button>
-    {% endif %}
-  </div>
+        <button id="save-button" class="btn btn-primary btn-sm" style="width:25%">Save Changes</button>
+        {% endif %}
+    </div>
 </div>
 {% endblock content %}
 {% block extra_script_after_body %}
-  {% if user.is_superuser %}
-    <script>
-      sortable('#unassigned-sign-ups', {
-        acceptFrom: '#white-team,#dark-team,#unassigned-sign-ups',
-        placeholderClass: 'list-group-item col-md-6 sortable-placeholder-border'
-      });
-      sortable('#white-team', {
-        acceptFrom: '#white-team,#dark-team,#unassigned-sign-ups',
-        placeholderClass: 'list-group-item col-md-6 sortable-placeholder-border'
-      });
-      sortable('#dark-team', {
-        acceptFrom: '#white-team,#dark-team,#unassigned-sign-ups',
-        placeholderClass: 'list-group-item col-md-6 sortable-placeholder-border'
-      });
-
-      $(document).ready(function() {
-        $("#message").hide();
-        // Add event listener to save changes
-        $('#save-button').click(function(){
-          // Extract player IDs from updated team rosters
-          var whiteTeam = $('#white-team').find('.list-group-item').map(function() {
-            return $(this).data('id');
-          }).get();
-
-          var darkTeam = $('#dark-team').find('.list-group-item').map(function() {
-            return $(this).data('id');
-          }).get();
-
-          var unassignedPlayers = $('#unassigned-sign-ups').find('.list-group-item').map(function() {
-            return $(this).data('id');
-          }).get();
-
-          // Make AJAX request to update model
-          $.ajax({
-            url: '{% url 'dropins:update-rosters' %}',
-            type: 'POST',
-            data: {
-              'white_team_sign_up_ids': whiteTeam,
-              'dark_team_sign_up_ids': darkTeam,
-              'unassigned_ids': unassignedPlayers,
-              csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val()
-            },
-            success: function(response) {
-              $("#message-text").text('Successfully saved rosters');
-              $('.alert').addClass('alert-success');
-              $("#message").show();
-            },
-            error: function(xhr, status, error) {
-              $("#message-text").text('Failed to save rosters');
-              $('.alert').addClass('alert-danger');
-              $("#message").show();
-            }
-          });
-        });
-      });
-
-      const targetDiv = document.getElementById("message");
-      const btn = document.getElementById("messageClose");
-      btn.onclick = function () {
-          if (targetDiv.style.display !== "none") {
-              targetDiv.style.display = "none";
-          } else {
-              targetDiv.style.display = "block";
-          }
-          if ($('.alert').hasClass('alert-danger')) {
-              $('.alert').removeClass('alert-danger');
-          }
-          if ($('.alert').hasClass('alert-success')) {
-              $('.alert').removeClass('alert-success');
-          }
-      };
-    </script>
-  {% endif %}
+    {% if user.is_superuser %}
+        <script>
+            var updateRostersURL = '{% url 'dropins:update-rosters' %}'
+        </script>
+        <script type="text/javascript" src="{% static 'dropins/dropin_details.js' %}"></script>
+    {% endif %}
 {% endblock extra_script_after_body %}

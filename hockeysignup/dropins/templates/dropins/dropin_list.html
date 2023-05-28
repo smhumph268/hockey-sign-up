@@ -14,7 +14,14 @@
                 <h1 class="display-4">{{ dropin.datetime }}</h1>
                 <p class="lead">{{ dropin.name }} | {{ dropin.rink }}</p>
                 <hr class="my-4">
-                <p>Click the buttons below to view details and sign up or withdraw</p>
+                <p>
+                    {% if user.is_authenticated %}
+                        <b id="rostered-text-{{ dropin.id }}">
+                            {% if dropin.id in users_rostered_drop_ins %}You are rostered.{% else %}You are not rostered.{% endif %}
+                        </b>
+                    {% endif %}
+                    Click the buttons below to view details and sign up or withdraw
+                </p>
                 {% if user.is_authenticated %}
                     <div id="sign-up-as-goalie-div-{{ dropin.id }}"><p>Sign up as a goalie <input type="checkbox" id="sign-up-as-goalie-{{ dropin.id }}" /></p></div>
                 {% endif %}

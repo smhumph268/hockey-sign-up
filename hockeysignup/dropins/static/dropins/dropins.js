@@ -10,6 +10,11 @@ $(document).ready(function() {
         if ($("#sign-up-toggle-"+dropIn).text() == 'Withdraw') {
             $("#sign-up-as-goalie-div-"+dropIn).hide();
         }
+        if ($("#rostered-text-"+dropIn).text().trim() == 'You are not rostered.') {
+            $("#rostered-text-"+dropIn).css("color","red");
+        } else {
+            $("#rostered-text-"+dropIn).css("color","green");
+        }
         allSignUpButtons[i].addEventListener('click', function() {
             var dropIn = this.id.replace("sign-up-toggle-", "")
             var asGoalie = false
@@ -55,6 +60,11 @@ $(document).ready(function() {
                         $("#sign-up-as-goalie-div-"+dropIn).show();
                     }
                     $("#sign-up-toggle-"+dropIn).text(sessionStorage.getItem('sign-up-toggle-'+dropIn));
+                    /* If the request was successful, then the rostered text should be red no matter what and it
+                    should say 'You are not rostered' because if you are just signing up, then you need an admin
+                    to roster you and if you are withdrawing, then you are not rostered or signed up */
+                    $("#rostered-text-"+dropIn).css("color","red");
+                    $("#rostered-text-"+dropIn).text('You are not rostered.');
                 },
                 error: function(xhr, status, error) {
                     $("#message-text-"+dropIn).text('Failed to change sign up status');

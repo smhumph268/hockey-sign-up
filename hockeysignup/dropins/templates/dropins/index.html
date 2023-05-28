@@ -22,7 +22,10 @@
             {% with upcoming_dropin|first as dropin %}
                 <p class="lead">{{ dropin }}</p>
                 <hr class="my-4">
-                <p>Click the button below to view details{% if user.is_authenticated %} and sign up or withdraw{% endif %}</p>
+                <p>
+                    {% if user.is_authenticated %}<b id="rostered-text-{{ dropin.id }}" style="color:green">You are rostered.</b>{% endif %}
+                    Click the button below to view details{% if user.is_authenticated %} and sign up or withdraw{% endif %}
+                </p>
                 {% if user.is_authenticated %}
                     <div id="sign-up-as-goalie-div-{{ dropin.id }}"><p>Sign up as a goalie <input type="checkbox" id="sign-up-as-goalie-{{ dropin.id }}" /></p></div>
                 {% endif %}

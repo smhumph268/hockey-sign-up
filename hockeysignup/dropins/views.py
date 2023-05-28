@@ -45,9 +45,15 @@ def list_upcoming(request):
     page_obj = paginator.get_page(page_number)
 
     if request.user.is_authenticated:
-        users_drop_ins = SignUp.objects.filter(
+        users_sign_ups = SignUp.objects.filter(
             user=request.user,
             dropIn__in=drop_ins.values_list('id', flat=True)
+        )
+
+        users_rostered_sign_ups = SignUp.objects.filter(
+            user=request.user,
+            dropIn__in=drop_ins.values_list('id', flat=True),
+            rostered=True
         )
 
         return render(
@@ -55,7 +61,8 @@ def list_upcoming(request):
             'dropins/dropin_list.html',
             {
               "page_obj": page_obj,
-              'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True)
+              'users_drop_ins': users_sign_ups.values_list('dropIn', flat=True),
+              'users_rostered_drop_ins': users_rostered_sign_ups.values_list('dropIn', flat=True)
             }
         )
     else:
@@ -96,7 +103,9 @@ def list_my_upcoming(request):
             'dropins/dropin_list.html',
             {
                 "page_obj": page_obj,
-                'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True)
+                'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True),
+                # The user should be rostered for all users_drop_ins based on the logic above
+                'users_rostered_drop_ins': users_drop_ins.values_list('dropIn', flat=True)
             }
         )
     else:
