@@ -23,7 +23,10 @@
                 <p class="lead">{{ dropin }}</p>
                 <hr class="my-4">
                 <p>
-                    {% if user.is_authenticated %}<b id="rostered-text-{{ dropin.id }}" style="color:green">You are rostered.</b>{% endif %}
+                    {% if user.is_authenticated %}
+                        <b id="rostered-text-{{ dropin.id }}" style="color:green">You are rostered.</b>
+                        <b id="paid-text-{{ dropin.id }}">{% if user_has_paid %}You have paid.{% else %}You have not paid.{% endif %}</b>
+                    {% endif %}
                     Click the button below to view details{% if user.is_authenticated %} and sign up or withdraw{% endif %}
                 </p>
                 {% if user.is_authenticated %}
@@ -39,6 +42,18 @@
                             Withdraw
                         </a>
                     </p>
+                    {% if not user_has_paid %}
+                        <div id="payment-buttons-{{ dropin.id }}" class="payment-buttons">
+                            <p class="lead button-row">
+                                <a id="pay-paypal-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">Pay with PayPal</a>
+                            </p>
+                            {% if user_has_credits %}
+                                <p class="lead button-row">
+                                    <a id="pay-credits-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">Pay with Credits</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                     <div class="container-fluid p-0" id="message-{{ dropin.id }}">
                         <div class="alert alert-dismissible" role="alert" id="message-div-{{ dropin.id }}">
                             <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="message-close-{{ dropin.id }}">

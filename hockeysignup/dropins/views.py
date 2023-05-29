@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.views import generic
 from django.utils import timezone
 from django.http import JsonResponse
 from django.db.models import F
@@ -9,26 +8,48 @@ from django.db.models import F
 from .models import DropIn, SignUp
 
 
-class IndexView(generic.ListView):
-    template_name = 'dropins/index.html'
-    context_object_name = 'upcoming_dropin'
+def index(request):
+    """
+    Shows next upcoming drop-in. If logged in, shows the next upcoming drop-in that the user is rostered for.
+    """
+    if request.user.is_authenticated:
+        rostered_signups = SignUp.objects.filter(user=request.user, rostered=True)
 
-    def get_queryset(self):
-        """
-        Shows next upcoming drop-in. If logged in, shows the next upcoming drop-in that the user is rostered for.
-        """
-        if self.request.user.is_authenticated:
-            rostered_signups = SignUp.objects.filter(user=self.request.user, rostered=True)
-            return DropIn.objects.filter(
-                datetime__gte=timezone.now(),
-                visible=True,
-                id__in=rostered_signups.values_list('dropIn', flat=True)
-            ).order_by('datetime')[:1]
+        upcoming_dropin = DropIn.objects.filter(
+            datetime__gte=timezone.now(),
+            visible=True,
+            id__in=rostered_signups.values_list('dropIn', flat=True)
+        ).order_by('datetime')[:1]
+
+        if len(upcoming_dropin) > 0:
+            user_sign_up_for_upcoming_dropin = SignUp.objects.get(
+                user=request.user,
+                dropIn=upcoming_dropin.values()[0]['id']
+            )
+            return render(
+                request,
+                'dropins/index.html',
+                {
+                    'upcoming_dropin': upcoming_dropin,
+                    'user_has_paid': user_sign_up_for_upcoming_dropin.paid,
+                    'user_has_credits': request.user.has_credits()
+                }
+            )
         else:
-            return DropIn.objects.filter(
-                datetime__gte=timezone.now(),
-                visible=True
-            ).order_by('datetime')[:1]
+            return render(request, 'dropins/index.html')
+    else:
+        upcoming_dropin = DropIn.objects.filter(
+            datetime__gte=timezone.now(),
+            visible=True
+        ).order_by('datetime')[:1]
+
+        return render(
+            request,
+            'dropins/index.html',
+            {
+                "upcoming_dropin": upcoming_dropin
+            }
+        )
 
 
 def list_upcoming(request):

@@ -92,7 +92,13 @@
         </nav>
     {% else %}
         <div class="bg-light dropin-div">
-            <h1 class="display-4">No{% if user.is_authenticated %}t rostered for{% endif %} upcoming drop-ins</h1>
+            <h1 class="display-4">
+                {% if request.path == '/dropins/list/upcoming/' %}
+                    No upcoming drop-ins
+                {% else %}
+                    Not rostered for upcoming drop-ins
+                {% endif %}
+            </h1>
         </div>
     {% endif %}
 {% endblock content %}

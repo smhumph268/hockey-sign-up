@@ -20,6 +20,7 @@ if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
     }
 }
 
+// Generic function to create event listener for payment option butttons
 function createPaymentButtonListenerIfExists(buttonIDText, paymentURL, dropIn) {
     // Add event listener for pay with paypal button - if it exists
     var paypalButton = document.querySelector('#'+buttonIDText+dropIn)
