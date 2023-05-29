@@ -19,6 +19,11 @@
                         <b id="rostered-text-{{ dropin.id }}">
                             {% if dropin.id in users_rostered_drop_ins %}You are rostered.{% else %}You are not rostered.{% endif %}
                         </b>
+                        {% if dropin.id in users_rostered_drop_ins %}
+                            <b id="paid-text-{{ dropin.id }}">
+                                {% if dropin.id in users_unpaid_rostered_drop_ins %}You have not paid.{% else %}You have paid.{% endif %}
+                            </b>
+                        {% endif %}
                     {% endif %}
                     Click the buttons below to view details and sign up or withdraw
                 </p>
@@ -37,6 +42,18 @@
                             {% if dropin.id in users_drop_ins %}Withdraw{% else %}Sign Up{% endif %}
                         </a>
                     </p>
+                    {% if dropin.id in users_rostered_drop_ins and dropin.id in users_unpaid_rostered_drop_ins %}
+                        <div id="payment-buttons-{{ dropin.id }}" class="payment-buttons">
+                            <p class="lead button-row">
+                                <a id="pay-paypal-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">Pay with PayPal</a>
+                            </p>
+                            {% if user_has_credits %}
+                                <p class="lead button-row">
+                                    <a id="pay-credits-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">Pay with Credits</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                     <div class="container-fluid p-0" id="message-{{ dropin.id }}">
                         <div class="alert alert-dismissible" role="alert" id="message-div-{{ dropin.id }}">
                             <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="message-close-{{ dropin.id }}">
@@ -75,13 +92,21 @@
         </nav>
     {% else %}
         <div class="bg-light dropin-div">
-            <h1 class="display-4">No{% if user.is_authenticated %}t rostered for{% endif %} upcoming drop-ins</h1>
+            <h1 class="display-4">
+                {% if request.path == '/dropins/list/upcoming/' %}
+                    No upcoming drop-ins
+                {% else %}
+                    Not rostered for upcoming drop-ins
+                {% endif %}
+            </h1>
         </div>
     {% endif %}
 {% endblock content %}
 {% block extra_script_after_body %}
     <script>
         var toggleSignUpURL = '{% url 'dropins:toggle-signup' %}'
+        var payWithPayPalURL = '{% url 'dropins:pay-paypal' %}'
+        var payWithCreditsURL = '{% url 'dropins:pay-credits' %}'
     </script>
     <script type="text/javascript" src="{% static 'dropins/dropins.js' %}"></script>
 {% endblock extra_script_after_body %}

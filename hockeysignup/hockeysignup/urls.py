@@ -19,7 +19,7 @@ from django.urls import path, include
 from dropins import views as dropin_views
 
 urlpatterns = [
-    path('', dropin_views.IndexView.as_view(), name='index'),
+    path('', dropin_views.index, name='index'),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('dropins/', include('dropins.urls'))

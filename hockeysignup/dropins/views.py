@@ -1,33 +1,55 @@
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.views import generic
 from django.utils import timezone
 from django.http import JsonResponse
+from django.db.models import F
 
 from .models import DropIn, SignUp
 
 
-class IndexView(generic.ListView):
-    template_name = 'dropins/index.html'
-    context_object_name = 'upcoming_dropin'
+def index(request):
+    """
+    Shows next upcoming drop-in. If logged in, shows the next upcoming drop-in that the user is rostered for.
+    """
+    if request.user.is_authenticated:
+        rostered_signups = SignUp.objects.filter(user=request.user, rostered=True)
 
-    def get_queryset(self):
-        """
-        Shows next upcoming drop-in. If logged in, shows the next upcoming drop-in that the user is rostered for.
-        """
-        if self.request.user.is_authenticated:
-            rostered_signups = SignUp.objects.filter(user=self.request.user, rostered=True)
-            return DropIn.objects.filter(
-                datetime__gte=timezone.now(),
-                visible=True,
-                id__in=rostered_signups.values_list('dropIn', flat=True)
-            ).order_by('datetime')[:1]
+        upcoming_dropin = DropIn.objects.filter(
+            datetime__gte=timezone.now(),
+            visible=True,
+            id__in=rostered_signups.values_list('dropIn', flat=True)
+        ).order_by('datetime')[:1]
+
+        if len(upcoming_dropin) > 0:
+            user_sign_up_for_upcoming_dropin = SignUp.objects.get(
+                user=request.user,
+                dropIn=upcoming_dropin.values()[0]['id']
+            )
+            return render(
+                request,
+                'dropins/index.html',
+                {
+                    'upcoming_dropin': upcoming_dropin,
+                    'user_has_paid': user_sign_up_for_upcoming_dropin.paid,
+                    'user_has_credits': request.user.has_credits()
+                }
+            )
         else:
-            return DropIn.objects.filter(
-                datetime__gte=timezone.now(),
-                visible=True
-            ).order_by('datetime')[:1]
+            return render(request, 'dropins/index.html')
+    else:
+        upcoming_dropin = DropIn.objects.filter(
+            datetime__gte=timezone.now(),
+            visible=True
+        ).order_by('datetime')[:1]
+
+        return render(
+            request,
+            'dropins/index.html',
+            {
+                "upcoming_dropin": upcoming_dropin
+            }
+        )
 
 
 def list_upcoming(request):
@@ -56,13 +78,22 @@ def list_upcoming(request):
             rostered=True
         )
 
+        users_unpaid_rostered_sign_ups = SignUp.objects.filter(
+            user=request.user,
+            dropIn__in=drop_ins.values_list('id', flat=True),
+            rostered=True,
+            paid=False
+        )
+
         return render(
             request,
             'dropins/dropin_list.html',
             {
-              "page_obj": page_obj,
-              'users_drop_ins': users_sign_ups.values_list('dropIn', flat=True),
-              'users_rostered_drop_ins': users_rostered_sign_ups.values_list('dropIn', flat=True)
+                "page_obj": page_obj,
+                'users_drop_ins': users_sign_ups.values_list('dropIn', flat=True),
+                'users_rostered_drop_ins': users_rostered_sign_ups.values_list('dropIn', flat=True),
+                'users_unpaid_rostered_drop_ins': users_unpaid_rostered_sign_ups.values_list('dropIn', flat=True),
+                'user_has_credits': request.user.has_credits()
             }
         )
     else:
@@ -81,12 +112,12 @@ def list_my_upcoming(request):
     can show buttons to sign up or withdraw from a drop-in.
     """
     rostered_signups = SignUp.objects.filter(user=request.user, rostered=True)
-    drop_ins = DropIn.objects.filter(
+    rostered_drop_ins = DropIn.objects.filter(
         datetime__gte=timezone.now(),
         visible=True,
         id__in=rostered_signups.values_list('dropIn', flat=True)
     ).order_by('datetime')
-    paginator = Paginator(drop_ins, 5)  # Show 5 drop-ins per page.
+    paginator = Paginator(rostered_drop_ins, 5)  # Show 5 drop-ins per page.
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -95,7 +126,13 @@ def list_my_upcoming(request):
     if request.user.is_authenticated:
         users_drop_ins = SignUp.objects.filter(
             user=request.user,
-            dropIn__in=drop_ins.values_list('id', flat=True)
+            dropIn__in=rostered_drop_ins.values_list('id', flat=True)
+        )
+
+        users_unpaid_rostered_sign_ups = SignUp.objects.filter(
+            user=request.user,
+            dropIn__in=rostered_drop_ins.values_list('id', flat=True),
+            paid=False
         )
 
         return render(
@@ -105,7 +142,9 @@ def list_my_upcoming(request):
                 "page_obj": page_obj,
                 'users_drop_ins': users_drop_ins.values_list('dropIn', flat=True),
                 # The user should be rostered for all users_drop_ins based on the logic above
-                'users_rostered_drop_ins': users_drop_ins.values_list('dropIn', flat=True)
+                'users_rostered_drop_ins': users_drop_ins.values_list('dropIn', flat=True),
+                'users_unpaid_rostered_drop_ins': users_unpaid_rostered_sign_ups.values_list('dropIn', flat=True),
+                'user_has_credits': request.user.has_credits()
             }
         )
     else:
@@ -158,11 +197,11 @@ def update_rosters(request):
 def toggle_signup(request):
     if request.method == 'POST':
         drop_in = get_object_or_404(DropIn, pk=request.POST.get('dropInToToggle'))
-        user_signups_for_drop_in = SignUp.objects.filter(user=request.user.id, dropIn=drop_in.id)
+        user_signup_for_drop_in = SignUp.objects.filter(user=request.user.id, dropIn=drop_in.id)
         action = 'signed up'
 
-        if user_signups_for_drop_in:
-            user_signups_for_drop_in.delete()
+        if user_signup_for_drop_in:
+            user_signup_for_drop_in.delete()
             action = 'withdrew'
         else:
             new_sign_up = SignUp(
@@ -174,5 +213,44 @@ def toggle_signup(request):
             new_sign_up.save()
 
         return JsonResponse({'success': True, 'text': 'Successfully '+action})
+    else:
+        return JsonResponse({'success': False})
+
+
+def pay_with_paypal(request):
+    if request.method == 'POST':
+        drop_in = get_object_or_404(DropIn, pk=request.POST.get('dropInToPayFor'))
+        user_signup_for_drop_in = SignUp.objects.get(user=request.user.id, dropIn=drop_in.id)
+        user_signup_for_drop_in.paid = True
+        user_signup_for_drop_in.save()
+
+        return JsonResponse({'success': True, 'text': 'Successfully paid with PayPal'})
+    else:
+        return JsonResponse({'success': False})
+
+
+def pay_with_credits(request):
+    if request.method == 'POST':
+        drop_in = get_object_or_404(DropIn, pk=request.POST.get('dropInToPayFor'))
+        user_signup_for_drop_in = SignUp.objects.get(user=request.user.id, dropIn=drop_in.id)
+
+        if request.user.has_credits():
+            # F to help prevent race condition
+            request.user.credits = F("credits") - 1
+            request.user.save()
+            user_signup_for_drop_in.paid = True
+            user_signup_for_drop_in.save()
+            # Need to get refreshed value from database before returning message
+            request.user.refresh_from_db()
+            response_message = f'Successfully paid with credits. You have {request.user.credits} left.'
+            return JsonResponse(
+                {'success': True, 'text': response_message}
+            )
+        else:
+            response_message = f'Failed to pay with credits. You have {request.user.credits} credits.'
+            return JsonResponse(
+                {'success': False, 'text': response_message}
+            )
+
     else:
         return JsonResponse({'success': False})
