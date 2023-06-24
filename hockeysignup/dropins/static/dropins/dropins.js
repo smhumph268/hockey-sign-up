@@ -195,7 +195,8 @@ $(document).ready(function() {
         });
 
         // Add event listener for pay with paypal button
-        createPaymentButtonListenerIfExists('pay-paypal-', payWithPayPalURL, dropIn);
+        // Changing how the PayPal payment works to pay in dropin_detail.html - just commenting out in case this becomes relevant later
+        // createPaymentButtonListenerIfExists('pay-paypal-', payWithPayPalURL, dropIn);
 
         // Add event listener for pay with credits button
         createPaymentButtonListenerIfExists('pay-credits-', payWithCreditsURL, dropIn);

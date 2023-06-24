@@ -19,6 +19,9 @@ class DropIn(models.Model):
     name = models.CharField(max_length=100, help_text='Name of the drop-in as appears on the Chiller website')
     datetime = models.DateTimeField('drop in datetime')
     visible = models.BooleanField(default=False, help_text='Makes this drop-in visible on the website for users')
+    skaterFee = models.IntegerField(default=0)
+    goalieFee = models.IntegerField(default=0)
+    paypalClientID = models.CharField(max_length=100, help_text='Client ID of the PayPal account that should receive payments for this drop in')
 
     def __str__(self):
         return self.datetime.strftime('%B %d, %Y %I:%M %p')+' | '+self.name.__str__()+' | '+self.rink.__str__()

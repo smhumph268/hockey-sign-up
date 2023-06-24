@@ -44,8 +44,8 @@
                     </p>
                     {% if dropin.id in users_rostered_drop_ins and dropin.id in users_unpaid_rostered_drop_ins %}
                         <div id="payment-buttons-{{ dropin.id }}" class="payment-buttons">
-                            <p class="lead button-row">
-                                <a id="pay-paypal-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">Pay with PayPal</a>
+                            <p class="lead button-row" >
+                                <a id="pay-options-link" href="{% url 'dropins:detail' dropin.id %}" class="btn btn-primary btn-lg" role="button">Pay with PayPal/Venmo</a>
                             </p>
                             {% if user_has_credits %}
                                 <p class="lead button-row">

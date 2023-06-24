@@ -17,7 +17,9 @@ class DropInAdmin(admin.ModelAdmin):
         (None, {'fields': ['rink']}),
         (None, {'fields': ['name']}),
         ('Date Information', {'fields': ['datetime'], 'classes': ['collapse']}),
-        (None, {'fields': ['visible']}),
+        (None, {'fields': ['paypalClientID']}),
+        (None, {'fields': ['skaterFee', 'goalieFee']}),
+        (None, {'fields': ['visible']})
     ]
     list_display = ('id', 'datetime', 'name', 'rink', 'visible')
     list_filter = [('datetime', DateRangeFilter), 'visible', 'name', 'rink']

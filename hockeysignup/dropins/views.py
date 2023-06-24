@@ -160,7 +160,29 @@ def list_my_upcoming(request):
 def single_drop_in_detail_view(request, drop_in_id):
     drop_in = get_object_or_404(DropIn, pk=drop_in_id)
     signups = SignUp.objects.filter(dropIn=drop_in_id)
-    return render(request, 'dropins/dropin_detail.html', {'drop_in': drop_in, 'signups': signups})
+
+    user_sign_up_for_drop_in = SignUp.objects.filter(
+        user=request.user,
+        dropIn=drop_in,
+        rostered=True,
+        paid=False
+    )
+
+    if user_sign_up_for_drop_in:
+        user_needs_to_pay = user_sign_up_for_drop_in.values()[0]["rostered"] and not \
+        user_sign_up_for_drop_in.values()[0]["paid"]
+    else:
+        user_needs_to_pay = False
+
+    return render(
+        request,
+        'dropins/dropin_detail.html',
+        {
+            'drop_in': drop_in,
+            'signups': signups,
+            'user_needs_to_pay': user_needs_to_pay
+        }
+    )
 
 
 def update_rosters(request):
