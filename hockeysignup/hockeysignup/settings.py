@@ -51,6 +51,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #
 WSGI_APPLICATION = 'hockeysignup.wsgi.application'
 
+# https://stackoverflow.com/questions/71104248/paypal-javascript-sdk-button-opens-aboutblankblocked-window-in-django-template
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
