@@ -16,7 +16,7 @@
     <div class="d-flex row justify-content-center align-items-center">
         <h1 style="text-align:center">{{ drop_in }}</h1>
 
-        <table class="bordered-table">
+        <table class="centered-table">
             <thead>
             <tr>
                 <th>White Team</th>
@@ -54,7 +54,7 @@
         </table>
 
         {% if user.is_superuser %}
-        <table class="bordered-table">
+        <table class="centered-table">
             <thead>
             <tr>
                 <th>Unassigned Sign-Ups</th>
@@ -92,8 +92,8 @@
 
         {% if user.is_authenticated and user_needs_to_pay %}
             <script src="https://www.paypal.com/sdk/js?client-id={{drop_in.paypalClientID}}&currency=USD&enable-funding=venmo"></script>
-            <div style="margin-top: 15px;margin-left: 42%;">
-                <div id="paypal-button-container" ></div>
+            <div class="paypal-button-container-container">
+                <div id="paypal-button-container"></div>
             </div>
         {% endif %}
 

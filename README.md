@@ -40,6 +40,12 @@ The setup instructions are all assuming that you are on Windows.
 		- This is my timezone
 	- ALLOWED_HOSTS=testserver,127.0.0.1,192.168.1.67,localhost
 		- servers for doing most anyting locally
+	- ORGANIZER_JSON={"Name":{"paypalClientID":"","playerFees":{"skater":"17", "goalie":"0"}}}
+		- This will be used to autopopulate drop in details pulled from the chiller website
+		- Fields:
+			- Name = Name for drop-in session as appears in chiller
+			- paypalClientID = client ID from app in paypal
+			- playerFees = default player/goalie payment amounts
 
 - Get the database populated
 	- python manage.py makemigrations

@@ -39,7 +39,7 @@ paypal.Buttons({
             },
             purchase_units: [{
                 amount: {
-                    value: '0.01'
+                    value: '5.00'
                 },
                 payee: {
                     email_address: "organizer-614-signup@personal.example.com",
@@ -51,7 +51,7 @@ paypal.Buttons({
     // Finalize the transaction after payer approval
     onApprove: function(data, actions) {
         return actions.order.capture().then(function(details){
-            $("#message-text").text('Transaction completed by ' + details.payer.name.given_name + '! You paid ' + details.purchase_units[0].amount.value + ' ' + details.purchase_units[0].amount.currency_code);
+            $("#message-text").text('Transaction completed by ' + details.payer.name.given_name + '! You paid ' + details.purchase_units[0].amount.value + ' ' + details.purchase_units[0].amount.currency_code + ' using ' + data.paymentSource);
             $('.alert').addClass('alert-success');
             $("#message").show();
         });
