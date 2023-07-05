@@ -121,7 +121,10 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
         'PORT': '5432',
-        'ATOMIC_REQUESTS': 'True'
+        'ATOMIC_REQUESTS': 'True',
+        'TEST': {
+            'NAME': 'mytestdatabase',
+        },
     }
 }
 
