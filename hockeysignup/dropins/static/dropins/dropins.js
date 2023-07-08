@@ -7,7 +7,7 @@ if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
     Based on the code in this file, all keys in the session storage are IDs of elements that appear on the pages that
     list dropins */
     for (var i = 0; i < sessionStorage.length; i++) {
-        // Fine element with ID matching the key name from session storage
+        // Find element with ID matching the key name from session storage
         var correspondingElement = document.querySelector('#'+sessionStorage.key(i))
         if(correspondingElement) {
             console.log("Found "+sessionStorage.key(i)+' value: '+sessionStorage.getItem(sessionStorage.key(i)));

@@ -1,5 +1,7 @@
-.bordered-table{
-    border-spacing: 10px;
+.centered-table{
+    table-layout: fixed;
+    vertical-align: middle;
+    text-align: center;
 }
 .list-group{
     --bs-list-group-color:var(--bs-body-color);

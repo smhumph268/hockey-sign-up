@@ -4,7 +4,7 @@ from . import views
 app_name = 'dropins'
 urlpatterns = [
     path('', views.index, name='index'),
-    # The SingleDropInDetailView generic view expects the primary key value captured from the URL to be called "pk"
+    # SingleDropInDetailView generic view expects the primary key value captured from the URL to be called "drop_in_id"
     path('<int:drop_in_id>/', views.single_drop_in_detail_view, name='detail'),
     path('update-rosters/', views.update_rosters, name='update-rosters'),
     path('toggle-signup/', views.toggle_signup, name='toggle-signup'),
