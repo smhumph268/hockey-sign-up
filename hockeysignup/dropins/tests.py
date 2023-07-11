@@ -396,7 +396,7 @@ class PaymentURLTests(TestCase):
 
         # Make the payment post request, verify that the user successfully paid
         payment_response = self.client.post(self.paySelfReportURL, {"dropInToPayFor": drop_in.id}, xhr=True)
-        self.assertTrue(json.loads(payment_response.content)['text'].__contains__('Successfully paid'))
+        self.assertTrue(json.loads(payment_response.content)['text'].__contains__('Successfully reported payment'))
 
         # Should see "You have paid" on the index page after paying
         response = self.client.get(self.indexURL, follow=True)
