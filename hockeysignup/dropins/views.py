@@ -217,14 +217,14 @@ def toggle_signup(request):
         return JsonResponse({'success': False})
 
 
-def pay_with_paypal(request):
+def self_report_payment(request):
     if request.method == 'POST':
         drop_in = get_object_or_404(DropIn, pk=request.POST.get('dropInToPayFor'))
         user_signup_for_drop_in = SignUp.objects.get(user=request.user.id, dropIn=drop_in.id)
         user_signup_for_drop_in.paid = True
         user_signup_for_drop_in.save()
 
-        return JsonResponse({'success': True, 'text': 'Successfully paid with PayPal'})
+        return JsonResponse({'success': True, 'text': 'Successfully reported payment'})
     else:
         return JsonResponse({'success': False})
 

@@ -22,10 +22,10 @@ if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
 
 // Generic function to create event listener for payment option butttons
 function createPaymentButtonListenerIfExists(buttonIDText, paymentURL, dropIn) {
-    // Add event listener for pay with paypal button - if it exists
-    var paypalButton = document.querySelector('#'+buttonIDText+dropIn)
-    if (paypalButton) {
-        paypalButton.addEventListener('click', function() {
+    // Add event listener for self report payment button - if it exists
+    var selfReportButton = document.querySelector('#'+buttonIDText+dropIn)
+    if (selfReportButton) {
+        selfReportButton.addEventListener('click', function() {
             var dropIn = this.id.replace(buttonIDText, "")
 
             // Make AJAX request to update model
@@ -194,8 +194,8 @@ $(document).ready(function() {
             });
         });
 
-        // Add event listener for pay with paypal button
-        createPaymentButtonListenerIfExists('pay-paypal-', payWithPayPalURL, dropIn);
+        // Add event listener for self report payment button
+        createPaymentButtonListenerIfExists('pay-self-report-', selfReportPaymentURL, dropIn);
 
         // Add event listener for pay with credits button
         createPaymentButtonListenerIfExists('pay-credits-', payWithCreditsURL, dropIn);

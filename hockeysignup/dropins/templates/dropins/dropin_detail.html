@@ -42,8 +42,7 @@
                         {% for signup in signups %}
                             {% if signup.isWhiteTeam == False and signup.rostered == True %}
                                 <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
-                                    {{ signup.user.first_name }} {{ signup.user.last_name }}
-                                    {% if signup.isGoalie == True %} (G){% endif %}
+                                    {{ signup.user.first_name }} {{ signup.user.last_name }}{% if signup.isGoalie == True %} (G){% endif %}
                                 </li>
                             {% endif %}
                         {% endfor %}

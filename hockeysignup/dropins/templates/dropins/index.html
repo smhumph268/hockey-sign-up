@@ -45,7 +45,7 @@
                     {% if not user_has_paid %}
                         <div id="payment-buttons-{{ dropin.id }}" class="payment-buttons">
                             <p class="lead button-row">
-                                <a id="pay-paypal-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">I paid</a>
+                                <a id="pay-self-report-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">I paid</a>
                             </p>
                             {% if user_has_credits %}
                                 <p class="lead button-row">
@@ -81,7 +81,7 @@
 {% block extra_script_after_body %}
     <script>
         var toggleSignUpURL = '{% url 'dropins:toggle-signup' %}'
-        var payWithPayPalURL = '{% url 'dropins:pay-paypal' %}'
+        var selfReportPaymentURL = '{% url 'dropins:pay-self-report' %}'
         var payWithCreditsURL = '{% url 'dropins:pay-credits' %}'
     </script>
     <script type="text/javascript" src="{% static 'dropins/dropins.js' %}"></script>
