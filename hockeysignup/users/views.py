@@ -15,10 +15,6 @@ class UserLogoutView(views.LogoutView):
     template_name = 'users/logout.html'
 
 
-def home(request):
-    return render(request, 'users/home.html')
-
-
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -35,7 +31,6 @@ def register(request):
         # Append css class to every field that contains errors.
         for field in form.errors:
             form[field].field.widget.attrs['class'] += ' my-css-class'
-
 
     context = {'form': form}
     return render(request, 'users/register.html', context)

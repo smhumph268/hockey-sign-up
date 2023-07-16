@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %} - {{ drop_in }}{% endblock title %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dropins/dropins.css' %}">
+<link rel="stylesheet" href="{% static 'dropins/dropin_details.css' %}">
+{% endblock extra_css %}
+{% block extra_script_before_body %}
+    {% if user.is_superuser %}
+        <script src="{% static 'dropins/html5sortable.min.js' %}"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    {% endif %}
+{% endblock extra_script_before_body %}
+{% block content %}
+<div class="container">
+    <div class="d-flex row justify-content-center align-items-center">
+        <h1 style="text-align:center">{{ drop_in }}</h1>
+
+        <table class="centered-table">
+            <thead>
+            <tr>
+                <th>White Team</th>
+                <th>Dark Team</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <ul id="white-team" class="list-group justify-content-center align-items-center">
+                        {% for signup in signups %}
+                            {% if signup.isWhiteTeam == True and signup.rostered == True %}
+                                <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
+                                    {{ signup.user.first_name }} {{ signup.user.last_name }}
+                                    {% if signup.isGoalie == True %} (G){% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    <ul id="dark-team" class="list-group justify-content-center align-items-center">
+                        {% for signup in signups %}
+                            {% if signup.isWhiteTeam == False and signup.rostered == True %}
+                                <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
+                                    {{ signup.user.first_name }} {{ signup.user.last_name }}{% if signup.isGoalie == True %} (G){% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        {% if user.is_superuser %}
+        <table class="centered-table">
+            <thead>
+            <tr>
+                <th>Unassigned Sign-Ups</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <ul id="unassigned-sign-ups" class="list-group justify-content-center align-items-center">
+                        {% for signup in signups %}
+                            {% if signup.rostered == False %}
+                                <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
+                                    {{ signup.user.first_name }} {{ signup.user.last_name }}
+                                    {% if signup.isGoalie == True %} (G){% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        {% csrf_token %}
+        <div class="container-fluid p-0" id="message">
+            <div class="alert alert-dismissible" role="alert">
+                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="messageClose">
+                    <span aria-hidden="true">X</span>
+                </button>
+                <strong id="message-text"></strong>
+            </div>
+        </div>
+        <button id="save-button" class="btn btn-primary btn-sm" style="width:25%">Save Changes</button>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+{% block extra_script_after_body %}
+    {% if user.is_superuser %}
+        <script>
+            var updateRostersURL = '{% url 'dropins:update-rosters' %}'
+        </script>
+        <script type="text/javascript" src="{% static 'dropins/dropin_details.js' %}"></script>
+    {% endif %}
+{% endblock extra_script_after_body %}

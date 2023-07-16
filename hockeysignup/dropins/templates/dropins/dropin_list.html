@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %} - Drop Ins{% endblock title %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'dropins/dropins.css' %}">
+{% endblock extra_css %}
+{% block extra_script_before_body %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+{% endblock extra_script_before_body %}
+{% block content %}
+    {% if page_obj %}
+        {% for dropin in page_obj %}
+            <div class="bg-light dropin-div">
+                <h1 class="display-4">{{ dropin.datetime }}</h1>
+                <p class="lead">{{ dropin.name }} | {{ dropin.rink }}</p>
+                <hr class="my-4">
+                <p>
+                    {% if user.is_authenticated %}
+                        <b id="rostered-text-{{ dropin.id }}">
+                            {% if dropin.id in users_rostered_drop_ins %}You are rostered.{% else %}You are not rostered.{% endif %}
+                        </b>
+                        {% if dropin.id in users_rostered_drop_ins %}
+                            <b id="paid-text-{{ dropin.id }}">
+                                {% if dropin.id in users_unpaid_rostered_drop_ins %}You have not paid.{% else %}You have paid.{% endif %}
+                            </b>
+                        {% endif %}
+                    {% endif %}
+                    Click the buttons below to view details and sign up or withdraw
+                </p>
+                {% if user.is_authenticated %}
+                    <div id="sign-up-as-goalie-div-{{ dropin.id }}"><p>Sign up as a goalie <input type="checkbox" id="sign-up-as-goalie-{{ dropin.id }}" /></p></div>
+                {% endif %}
+                <p class="lead button-row">
+                    <a class="btn btn-primary btn-lg" href="{% url 'dropins:detail' dropin.id %}" role="button">
+                        Details
+                    </a>
+                </p>
+                {% if user.is_authenticated %}
+                    {% csrf_token %}
+                    <p class="lead button-row">
+                        <a id="sign-up-toggle-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">
+                            {% if dropin.id in users_drop_ins %}Withdraw{% else %}Sign Up{% endif %}
+                        </a>
+                    </p>
+                    {% if dropin.id in users_rostered_drop_ins and dropin.id in users_unpaid_rostered_drop_ins %}
+                        <div id="payment-buttons-{{ dropin.id }}" class="payment-buttons">
+                            <p class="lead button-row">
+                                <a id="pay-self-report-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">I paid</a>
+                            </p>
+                            {% if user_has_credits %}
+                                <p class="lead button-row">
+                                    <a id="pay-credits-{{ dropin.id }}" class="btn btn-primary btn-lg" role="button">Pay with Credits</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <div class="container-fluid p-0" id="message-{{ dropin.id }}">
+                        <div class="alert alert-dismissible" role="alert" id="message-div-{{ dropin.id }}">
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="message-close-{{ dropin.id }}">
+                                <span aria-hidden="true">X</span>
+                            </button>
+                            <strong id="message-text-{{ dropin.id }}"></strong>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <nav class="page-navbar" aria-label="Drop-in page navigation">
+            <ul class="pagination pagination-lg justify-content-center">
+                {% if page_obj.has_other_pages %}
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                {{ page_obj.previous_page_number }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ page_obj.number }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                {{ page_obj.next_page_number }}
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a></li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <div class="bg-light dropin-div">
+            <h1 class="display-4">
+                {% if request.path == '/dropins/list/upcoming/' %}
+                    No upcoming drop-ins
+                {% else %}
+                    Not rostered for upcoming drop-ins
+                {% endif %}
+            </h1>
+        </div>
+    {% endif %}
+{% endblock content %}
+{% block extra_script_after_body %}
+    <script>
+        var toggleSignUpURL = '{% url 'dropins:toggle-signup' %}'
+        var selfReportPaymentURL = '{% url 'dropins:pay-self-report' %}'
+        var payWithCreditsURL = '{% url 'dropins:pay-credits' %}'
+    </script>
+    <script type="text/javascript" src="{% static 'dropins/dropins.js' %}"></script>
+{% endblock extra_script_after_body %}

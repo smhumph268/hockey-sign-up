@@ -35,7 +35,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 AUTH_USER_MODEL = 'users.CustomUser'
 
 # Loging Redirect
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'index'
 
 ROOT_URLCONF = 'hockeysignup.urls'
 
@@ -56,7 +56,7 @@ WSGI_APPLICATION = 'hockeysignup.wsgi.application'
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = config('TIME_ZONE')
 USE_I18N = True
-USE_TZ = True
+USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
     'hockeysignup.backends.CustomAuthenticationBackend',
@@ -72,7 +72,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'users.apps.UsersConfig'
+    'rangefilter',
+    'users.apps.UsersConfig',
+    'dropins.apps.DropinsConfig'
 ]
 
 MESSAGE_TAGS = {
@@ -119,7 +121,10 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
         'PORT': '5432',
-        'ATOMIC_REQUESTS': 'True'
+        'ATOMIC_REQUESTS': 'True',
+        'TEST': {
+            'NAME': 'mytestdatabase',
+        },
     }
 }
 

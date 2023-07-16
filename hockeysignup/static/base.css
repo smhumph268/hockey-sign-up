@@ -279,6 +279,18 @@ button{
         flex:0 0 auto;
         width:66.66666667%
     }
+    .col-md-3{
+        flex:0 0 auto;
+        width:25%
+    }
+    .col-md-6{
+        flex:0 0 auto;
+        width:50%
+    }
+    .col-md-12{
+        flex:0 0 auto;
+        width:100%
+    }
 }
 @media (min-width:992px){
     .col-lg-auto{
@@ -454,6 +466,7 @@ button{
     --bs-btn-disabled-opacity:0.65;
     --bs-btn-focus-box-shadow:0 0 0 0.25rem rgba(var(--bs-btn-focus-shadow-rgb), .5);
     display:inline-block;
+    margin-top: 5px;
     padding:var(--bs-btn-padding-y) var(--bs-btn-padding-x);
     font-family:var(--bs-btn-font-family);
     font-size:var(--bs-btn-font-size);

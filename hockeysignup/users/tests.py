@@ -58,7 +58,7 @@ class HomePageViewTests(TestCase):
         self.username = 'testUser1'
         self.loginURL = reverse('users:login')
         self.logoutURL = reverse('users:logout')
-        self.homeURL = reverse('users:home')
+        self.indexURL = reverse('dropins:index')
         self.registerURL = reverse('users:register')
         MyUserModel = get_user_model()
         MyUserModel.objects.create_user(email=self.email,
@@ -69,7 +69,7 @@ class HomePageViewTests(TestCase):
         """
         Test user sees login and register URL if they aren't already logged in
         """
-        response = self.client.get(self.homeURL, follow=True)
+        response = self.client.get(self.indexURL, follow=True)
         # Shouldn't see logout URL
         self.assertTrue(response.content.decode(response.charset).__contains__(self.loginURL))
         self.assertTrue(response.content.decode(response.charset).__contains__(self.registerURL))
@@ -81,7 +81,7 @@ class HomePageViewTests(TestCase):
         """
         # send login data, go to home page
         self.client.post(self.loginURL, {'username': self.email, 'password': self.password}, follow=True)
-        response = self.client.get(self.homeURL, follow=True)
+        response = self.client.get(self.indexURL, follow=True)
         # Shouldn't see login and register URLs
         self.assertFalse(response.content.decode(response.charset).__contains__(self.loginURL))
         self.assertFalse(response.content.decode(response.charset).__contains__(self.registerURL))

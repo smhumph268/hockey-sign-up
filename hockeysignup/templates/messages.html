@@ -8,14 +8,14 @@
     </div>
   </div>
   <script>
-      const targetDiv = document.getElementById("message{{ forloop.counter }}");
-      const btn = document.getElementById("messageClose{{ forloop.counter }}");
-      btn.onclick = function () {
-        if (targetDiv.style.display !== "none") {
-          targetDiv.style.display = "none";
-        } else {
-          targetDiv.style.display = "block";
-        }
-      };
+    const targetDiv = document.getElementById("message{{ forloop.counter }}");
+    const btn = document.getElementById("messageClose{{ forloop.counter }}");
+    btn.onclick = function () {
+      if (targetDiv.style.display !== "none") {
+        targetDiv.style.display = "none";
+      } else {
+        targetDiv.style.display = "block";
+      }
+    };
   </script>
 {% endfor %}
