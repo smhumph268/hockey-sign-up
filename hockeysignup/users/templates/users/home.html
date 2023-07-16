@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="alert alert-success" role="alert">
+            <h3 style="text-align: center;">Welcome {{ user.username }}!</h3>
+        </div>
+    {% else %}
+        <div class="alert alert-success" role="alert">
+            <h3 style="text-align: center;">Welcome!</h3>
+        </div>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,21 @@
+{% for message in messages %}
+  <div class="container-fluid p-0" id="message{{ forloop.counter }}">
+    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+      <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="messageClose{{ forloop.counter }}">
+        <span aria-hidden="true">X</span>
+      </button>
+      <strong>{{message|escape}}</strong>
+    </div>
+  </div>
+  <script>
+      const targetDiv = document.getElementById("message{{ forloop.counter }}");
+      const btn = document.getElementById("messageClose{{ forloop.counter }}");
+      btn.onclick = function () {
+        if (targetDiv.style.display !== "none") {
+          targetDiv.style.display = "none";
+        } else {
+          targetDiv.style.display = "block";
+        }
+      };
+  </script>
+{% endfor %}
