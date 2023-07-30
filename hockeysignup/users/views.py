@@ -21,7 +21,7 @@ def register(request):
         if form.is_valid():
             form.save()
 
-            messages.success(request, f'Your account has been created. You can log in now!')
+            messages.success(request, f'Your account has been created and is pending review. You can login once approved.')
             return HttpResponseRedirect(reverse('users:login'))
         else:
             for field in form.errors:

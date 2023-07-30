@@ -32,7 +32,7 @@ class CustomUserModelTests(TestCase):
         self.assertTrue(user.check_password(self.password))
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
-        self.assertTrue(user.is_active)
+        self.assertFalse(user.is_active)
 
     def test_create_superuser(self):
         """
@@ -61,9 +61,12 @@ class HomePageViewTests(TestCase):
         self.indexURL = reverse('dropins:index')
         self.registerURL = reverse('users:register')
         MyUserModel = get_user_model()
-        MyUserModel.objects.create_user(email=self.email,
+        user = MyUserModel.objects.create_user(email=self.email,
                                         password=self.password,
                                         username=self.username)
+        # Users will be set to inactive upon creation because of the receiver defined in models.py
+        user.is_active = True
+        user.save()
 
     def test_see_login_and_register_when_logged_in_dont_see_logout(self):
         """
@@ -102,7 +105,7 @@ class RegisterViewTests(TestCase):
         """
         Test that user can register successfully
         """
-        # send login data
+        # send register data
         response = self.client.post(self.registerURL,
                                     {
                                         'email': self.email,
@@ -115,13 +118,13 @@ class RegisterViewTests(TestCase):
                                     follow=True)
         # should see register success message
         self.assertTrue(response.content.decode(response.charset).__contains__(
-            'Your account has been created. You can log in now!'))
+            'Your account has been created and is pending review. You can login once approved.'))
 
     def test_register_fail_from_email_input(self):
         """
         Test that registration fails when given email is bad
         """
-        # send login data
+        # send register data
         response = self.client.post(self.registerURL,
                                     {
                                         'email': 'address@missingdotcom',
@@ -140,7 +143,7 @@ class RegisterViewTests(TestCase):
         """
         Test that registration fails when given mismatched passwords
         """
-        # send login data
+        # send register data
         response = self.client.post(self.registerURL,
                                     {
                                         'email': self.email,
@@ -162,10 +165,14 @@ class LoginViewTests(TestCase):
         self.password = 'testPassword1'
         self.username = 'testUser1'
         self.loginURL = reverse('users:login')
-        MyUserModel = get_user_model()
-        MyUserModel.objects.create_user(email=self.email,
+        self.registerURL = reverse('users:register')
+        user = get_user_model().objects.create_user(email=self.email,
                                         password=self.password,
-                                        username=self.username)
+                                        username=self.username,
+                                        is_active=True)
+        # Users will be set to inactive upon creation because of the receiver defined in models.py
+        user.is_active = True
+        user.save()
 
     def test_login_success_with_username(self):
         """
@@ -184,6 +191,30 @@ class LoginViewTests(TestCase):
         response = self.client.post(self.loginURL, {'username': self.email, 'password': self.password}, follow=True)
         # should be logged in now
         self.assertTrue(response.wsgi_request.user.is_authenticated)
+
+    def test_login_fail_account_inactive_after_registration(self):
+        """
+        Test that user login will fail if they register and aren't activated yet
+        """
+        # send register data
+        email = 'test2@email.com'
+        password = 'testPassword1'
+        username = 'testUser2'
+        self.client.post(self.registerURL,
+            {
+                'email': email,
+                'username': username,
+                'first_name': 'John',
+                'last_name': 'Doe',
+                'password1': password,
+                'password2': password
+            },
+            follow=True)
+        # send login data
+        response = self.client.post(self.loginURL, {'username': username, 'password': password}, follow=True)
+        # should not be logged in now
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
+        self.assertTrue(response.content.decode(response.charset).__contains__('This account is inactive.'))
 
     def test_login_fail_bad_username(self):
         """
@@ -227,9 +258,12 @@ class LogoutViewTests(TestCase):
         self.loginURL = reverse('users:login')
         self.logoutURL = reverse('users:logout')
         MyUserModel = get_user_model()
-        MyUserModel.objects.create_user(email=self.email,
+        user = MyUserModel.objects.create_user(email=self.email,
                                         password=self.password,
                                         username=self.username)
+        # Users will be set to inactive upon creation because of the receiver defined in models.py
+        user.is_active = True
+        user.save()
 
     def test_logout_when_already_logged_in(self):
         """

@@ -9,10 +9,12 @@ class CustomUserAdmin(admin.ModelAdmin):
         (None,  {'fields': ['username']}),
         (None,  {'fields': ['first_name']}),
         (None,  {'fields': ['last_name']}),
-        (None,  {'fields': ['credits']})
+        (None,  {'fields': ['credits']}),
+        (None,  {'fields': ['is_active']})
     ]
-    list_display = ('email', 'username', 'first_name', 'last_name', 'credits')
-    search_fields = ['first_name', 'last_name', 'email']
+    list_display = ('email', 'is_active', 'username', 'first_name', 'last_name', 'credits')
+    search_fields = ['first_name', 'last_name', 'email', 'is_active']
+    list_filter = ['is_active']
 
 
 admin.site.register(CustomUser, CustomUserAdmin)

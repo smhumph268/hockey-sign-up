@@ -21,13 +21,17 @@ def create_user(email, password, username, super_user_flag, first_name, last_nam
             last_name=last_name
         )
     else:
-        return MyUserModel.objects.create_user(
+        regular_user = MyUserModel.objects.create_user(
             email=email,
             password=password,
             username=username,
             first_name=first_name,
             last_name=last_name
         )
+        # Users will be set to inactive upon creation because of the receiver defined in models.py of users app
+        regular_user.is_active = True
+        regular_user.save()
+        return regular_user
 
 
 def create_drop_in(given_name, given_rink, visible, days_offset):
