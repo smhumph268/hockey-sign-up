@@ -97,6 +97,8 @@ class RegisterViewTests(TestCase):
         self.username = 'testUser1'
         self.firstname = 'Testy'
         self.lastname = 'McTest'
+        self.skill_level = 'b'
+        self.preferred_position = 'goalie'
         self.password1 = 'testPassword1'
         self.password2 = 'testPassword1'
         self.registerURL = reverse('users:register')
@@ -112,6 +114,8 @@ class RegisterViewTests(TestCase):
                                         'username': self.username,
                                         'first_name': self.firstname,
                                         'last_name': self.lastname,
+                                        'skill_level': self.skill_level,
+                                        'preferred_position': self.preferred_position,
                                         'password1': self.password1,
                                         'password2': self.password2
                                     },
@@ -131,6 +135,8 @@ class RegisterViewTests(TestCase):
                                         'username': self.username,
                                         'first_name': self.firstname,
                                         'last_name': self.lastname,
+                                        'skill_level': self.skill_level,
+                                        'preferred_position': self.preferred_position,
                                         'password1': self.password1,
                                         'password2': self.password2
                                     },
@@ -150,6 +156,8 @@ class RegisterViewTests(TestCase):
                                         'username': self.username,
                                         'first_name': self.firstname,
                                         'last_name': self.lastname,
+                                        'skill_level': self.skill_level,
+                                        'preferred_position': self.preferred_position,
                                         'password1': self.password1,
                                         'password2': 'mismatch'
                                     },
@@ -158,18 +166,43 @@ class RegisterViewTests(TestCase):
         self.assertTrue(response.content.decode(response.charset).__contains__(
             'The two password fields didn’t match'))
 
+    def test_register_fail_from_bad_select_option_input(self):
+        """
+        Test that registration fails when given mismatched passwords
+        """
+        # send register data
+        response = self.client.post(self.registerURL,
+                                    {
+                                        'email': self.email,
+                                        'username': self.username,
+                                        'first_name': self.firstname,
+                                        'last_name': self.lastname,
+                                        'skill_level': 'f',
+                                        'preferred_position': self.preferred_position,
+                                        'password1': self.password1,
+                                        'password2': self.password1
+                                    },
+                                    follow=True)
+        # should see register success message
+        self.assertTrue(response.content.decode(response.charset).__contains__(
+            'Select a valid choice. f is not one of the available choices.'))
+        self.assertTrue(response.content.decode(response.charset).__contains__(
+            'Please resolve registration errors'))
+
 
 class LoginViewTests(TestCase):
     def setUp(self):
         self.email = 'test@email.com'
         self.password = 'testPassword1'
         self.username = 'testUser1'
+        self.skill_level = 'b'
+        self.preferred_position = 'goalie'
         self.loginURL = reverse('users:login')
         self.registerURL = reverse('users:register')
         user = get_user_model().objects.create_user(email=self.email,
-                                        password=self.password,
-                                        username=self.username,
-                                        is_active=True)
+                                                    password=self.password,
+                                                    username=self.username,
+                                                    is_active=True)
         # Users will be set to inactive upon creation because of the receiver defined in models.py
         user.is_active = True
         user.save()
@@ -206,6 +239,8 @@ class LoginViewTests(TestCase):
                 'username': username,
                 'first_name': 'John',
                 'last_name': 'Doe',
+                'skill_level': self.skill_level,
+                'preferred_position': self.preferred_position,
                 'password1': password,
                 'password2': password
             },
@@ -283,3 +318,111 @@ class LogoutViewTests(TestCase):
         # logout and assert unauthenticated
         response = self.client.get(self.logoutURL, follow=True)
         self.assertFalse(response.wsgi_request.user.is_authenticated)
+
+
+class ProfileViewTests(TestCase):
+    def setUp(self):
+        self.email = 'test@email.com'
+        self.password = 'testPassword1'
+        self.username = 'testUser1'
+        self.loginURL = reverse('users:login')
+        MyUserModel = get_user_model()
+        self.user = MyUserModel.objects.create_user(email=self.email,
+                                                    password=self.password,
+                                                    username=self.username)
+        # Users will be set to inactive upon creation because of the receiver defined in models.py
+        self.user.is_active = True
+        self.user.save()
+
+        # create second user for testing that users can't view each other's profiles
+        self.user2 = MyUserModel.objects.create_user(email='test2@email.com',
+                                                     password='testPassword2',
+                                                     username='testUser2')
+
+    def test_changing_from_default_profile_values(self):
+        """
+        Test that user has default skill_level and preferred_position values and then updates them to different values
+        """
+        # check that user has default values
+        self.assertTrue(self.user.skill_level == 'd')
+        self.assertTrue(self.user.preferred_position == 'forward')
+        # login as the user
+        self.client.post(self.loginURL, {'username': self.username, 'password': self.password}, follow=True)
+        # send updated profile data
+        response = self.client.post(reverse('users:profile', kwargs={'user_id': self.user.id}),
+                                    {
+                                        'skill_level': 'c',
+                                        'preferred_position': 'defense'
+                                    },
+                                    follow=True)
+        # should see updated values and should see update success message
+        self.user.refresh_from_db()  # need to refresh from the database after using the form
+        self.assertTrue(self.user.skill_level == 'c')
+        self.assertTrue(self.user.preferred_position == 'defense')
+        self.assertTrue(response.content.decode(response.charset).__contains__('Your details have been updated.'))
+
+    def test_give_bad_option_to_select_field(self):
+        """
+        Test that logged-in user will see error message when trying to provide bad values to the select field
+        """
+        # login as the user
+        self.client.post(self.loginURL, {'username': self.username, 'password': self.password}, follow=True)
+        # send updated profile data
+        response = self.client.post(reverse('users:profile', kwargs={'user_id': self.user.id}),
+                                    {
+                                        'skill_level': 'f',
+                                        'preferred_position': 'defense'
+                                    },
+                                    follow=True)
+        # should see original (default) values and should see error message
+        self.user.refresh_from_db()  # refresh from the database after using the form
+        self.assertTrue(self.user.skill_level == 'd')
+        self.assertTrue(self.user.preferred_position == 'forward')
+        self.assertTrue(response.content.decode(response.charset).__contains__(
+            'Select a valid choice. f is not one of the available choices.'))
+
+    def test_not_logged_in_user_cant_view_or_edit_profile(self):
+        """
+        Test that a user who isn't logged in can't view/edit an existing user's profile
+        """
+        # try to view profile
+        response = self.client.get(reverse('users:profile', kwargs={'user_id': self.user.id}))
+        self.assertTrue(
+            response.content.decode(response.charset).__contains__('You don\'t have access to this profile'))
+
+        # try to edit profile
+        response = self.client.post(reverse('users:profile', kwargs={'user_id': self.user.id}),
+                                    {
+                                        'skill_level': 'c',
+                                        'preferred_position': 'defense'
+                                    },
+                                    follow=True)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.skill_level == 'd')
+        self.assertTrue(self.user.preferred_position == 'forward')
+        self.assertTrue(
+            response.content.decode(response.charset).__contains__('You don\'t have access to this profile'))
+
+    def test_logged_in_user_cant_view_or_edit_other_users_profile(self):
+        """
+        Test that a user who is logged in can't view/edit another existing user's profile
+        """
+        # login as user
+        self.client.post(self.loginURL, {'username': self.username, 'password': self.password}, follow=True)
+        # try to view profile of user2
+        response = self.client.get(reverse('users:profile', kwargs={'user_id': self.user2.id}))
+        self.assertTrue(
+            response.content.decode(response.charset).__contains__('You don\'t have access to this profile'))
+
+        # try to edit profile of user2
+        response = self.client.post(reverse('users:profile', kwargs={'user_id': self.user2.id}),
+                                    {
+                                        'skill_level': 'c',
+                                        'preferred_position': 'defense'
+                                    },
+                                    follow=True)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.skill_level == 'd')
+        self.assertTrue(self.user.preferred_position == 'forward')
+        self.assertTrue(
+            response.content.decode(response.charset).__contains__('You don\'t have access to this profile'))

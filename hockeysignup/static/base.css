@@ -592,6 +592,21 @@ button{
     box-shadow:var(--bs-btn-close-focus-shadow);
     opacity:var(--bs-btn-close-focus-opacity)
 }
+.btn-primary{
+    --bs-btn-color:#fff!important;
+    --bs-btn-bg:#5c6370!important;
+    --bs-btn-hover-color:#fff;
+    --bs-btn-hover-bg:#0b5ed7;
+    --bs-btn-hover-border-color:#0a58ca;
+    --bs-btn-focus-shadow-rgb:49,132,253;
+    --bs-btn-active-color:#fff;
+    --bs-btn-active-bg:#0a58ca;
+    --bs-btn-active-border-color:#0a53be;
+    --bs-btn-active-shadow:inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color:#5c6370;
+    --bs-btn-disabled-bg:#0d6efd;
+    --bs-btn-disabled-border-color:#0d6efd
+}
 .alert{
     --bs-alert-bg:transparent;
     --bs-alert-padding-x:1rem;
@@ -837,4 +852,23 @@ button{
     .pb-lg-2{
         padding-bottom:.5rem!important
     }
+}
+.welcome-banner{
+    width: 75%;
+    text-align: center;
+    word-break: break-all;
+    margin: auto;
+    margin-top: 25px;
+}
+.messages-container{
+    /* If the device is medium width (bootstrap defines medium as 768 pixels), then make the message 25% the size of the
+     container, otherwise, let the message fill the container */
+    @media (min-width:768px){
+        width: 25%;
+    }
+    margin-top: 10px;
+}
+.lead{
+    font-size:1.25rem;
+    font-weight:300
 }
