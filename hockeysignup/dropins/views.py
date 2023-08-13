@@ -159,8 +159,16 @@ def list_my_upcoming(request):
 
 def single_drop_in_detail_view(request, drop_in_id):
     drop_in = get_object_or_404(DropIn, pk=drop_in_id)
-    signups = SignUp.objects.filter(dropIn=drop_in_id)
-    return render(request, 'dropins/dropin_detail.html', {'drop_in': drop_in, 'signups': signups})
+    signups = SignUp.objects.filter(dropIn=drop_in_id).order_by('datetime')
+    signup_top_x_index_cutoff = min(len(signups), 20) - 1
+    top_x_datetime_cutoff = signups[signup_top_x_index_cutoff].datetime
+    for signup in signups:
+        signup.in_top_x = signup.datetime <= top_x_datetime_cutoff
+    return render(
+        request,
+        'dropins/dropin_detail.html',
+        {'drop_in': drop_in, 'signups': signups}
+    )
 
 
 def update_rosters(request):
