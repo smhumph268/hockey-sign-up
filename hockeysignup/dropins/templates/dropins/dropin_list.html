@@ -11,7 +11,7 @@
     {% if page_obj %}
         {% for dropin in page_obj %}
             <div class="bg-light dropin-div">
-                <h1 class="display-4">{{ dropin.datetime }}</h1>
+                <h1 class="display-4">{{ dropin.datetime|date:"F j, Y, h:i A" }}</h1>
                 <p class="lead">{{ dropin.name }} | {{ dropin.rink }}</p>
                 <hr class="my-4">
                 <p>
@@ -54,7 +54,7 @@
                             {% endif %}
                         </div>
                     {% endif %}
-                    <div class="container-fluid p-0" id="message-{{ dropin.id }}">
+                    <div class="messages-container" id="message-{{ dropin.id }}">
                         <div class="alert alert-dismissible" role="alert" id="message-div-{{ dropin.id }}">
                             <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="message-close-{{ dropin.id }}">
                                 <span aria-hidden="true">X</span>

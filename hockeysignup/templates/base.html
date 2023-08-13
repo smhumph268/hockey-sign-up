@@ -17,9 +17,16 @@
 		<div class="container">
 		  <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 			<ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-			  <li><a href="{% url 'dropins:index' %}" class="nav-link px-2 {% if request.path == '/' or request.path == '/dropins/' %}text-secondary{% else %}text-white{% endif %}">Home</a></li>
-			  <li><a href="{% url 'dropins:upcoming-dropins' %}" class="nav-link px-2 {% if request.path == '/dropins/list/upcoming/' %}text-secondary{% else %}text-white{% endif %}">Drop-Ins</a></li>
-			  {% if user.is_authenticated %}<li><a href="{% url 'dropins:my-upcoming-dropins' %}" class="nav-link px-2 {% if request.path == '/dropins/list/my-upcoming/' %}text-secondary{% else %}text-white{% endif %}">My Drop-Ins</a></li>{% endif %}
+			  {% url 'dropins:index' as dropins_index_url %}
+			  <li><a href="{{ dropins_index_url }}" class="nav-link px-2 {% if request.path == '/' or request.path == dropins_index_url %}text-secondary{% else %}text-white{% endif %}">Home</a></li>
+			  {% url 'dropins:upcoming-dropins' as upcoming_dropins_url %}
+			  <li><a href="{{ upcoming_dropins_url }}" class="nav-link px-2 {% if request.path == upcoming_dropins_url %}text-secondary{% else %}text-white{% endif %}">Drop-Ins</a></li>
+			  {% if user.is_authenticated %}
+				{% url 'dropins:my-upcoming-dropins' as my_upcoming_dropins_url %}
+				<li><a href="{{ my_upcoming_dropins_url }}" class="nav-link px-2 {% if request.path == my_upcoming_dropins_url %}text-secondary{% else %}text-white{% endif %}">My Drop-Ins</a></li>
+				{% url 'users:profile' request.user.id as user_profile_url %}
+				<li><a href="{{ user_profile_url }}" class="nav-link px-2 {% if request.path == user_profile_url %}text-secondary{% else %}text-white{% endif %}">My Profile</a></li>
+			  {% endif %}
 			  {% if user.is_superuser %}<li><a href="{% url 'admin:index' %}" class="nav-link px-2 text-white">Admin</a></li>{% endif %}
 			</ul>
 			<div class="text-end">

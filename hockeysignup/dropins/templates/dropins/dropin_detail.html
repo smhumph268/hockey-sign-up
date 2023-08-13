@@ -32,6 +32,16 @@
                                 <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
                                     {{ signup.user.first_name }} {{ signup.user.last_name }}
                                     {% if signup.isGoalie == True %} (G){% endif %}
+                                    <br>
+                                    {% comment %}
+                                        see:
+                                        https://docs.djangoproject.com/en/4.2/ref/models/instances/#django.db.models.Model.get_FOO_display
+                                        https://stackoverflow.com/questions/4320679/django-display-choice-value
+                                    {% endcomment %}
+                                    <small class="player-details-text">
+                                        {% if user.is_superuser %}Skill: {{ signup.user.get_skill_level_display }} | {% endif %}
+                                        {% if signup.isGoalie == False %}Prefers {{ signup.user.get_preferred_position_display }}{% endif %}
+                                    </small>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -43,6 +53,16 @@
                             {% if signup.isWhiteTeam == False and signup.rostered == True %}
                                 <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
                                     {{ signup.user.first_name }} {{ signup.user.last_name }}{% if signup.isGoalie == True %} (G){% endif %}
+                                    <br>
+                                    {% comment %}
+                                        see:
+                                        https://docs.djangoproject.com/en/4.2/ref/models/instances/#django.db.models.Model.get_FOO_display
+                                        https://stackoverflow.com/questions/4320679/django-display-choice-value
+                                    {% endcomment %}
+                                    <small class="player-details-text">
+                                        {% if user.is_superuser %}Skill: {{ signup.user.get_skill_level_display }} | {% endif %}
+                                        {% if signup.isGoalie == False %}Prefers {{ signup.user.get_preferred_position_display }}{% endif %}
+                                    </small>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -68,6 +88,16 @@
                                 <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6" style="text-align:center">
                                     {{ signup.user.first_name }} {{ signup.user.last_name }}
                                     {% if signup.isGoalie == True %} (G){% endif %}
+                                    <br>
+                                    {% comment %}
+                                        see:
+                                        https://docs.djangoproject.com/en/4.2/ref/models/instances/#django.db.models.Model.get_FOO_display
+                                        https://stackoverflow.com/questions/4320679/django-display-choice-value
+                                    {% endcomment %}
+                                    <small class="player-details-text">
+                                        {% if user.is_superuser %}Skill: {{ signup.user.get_skill_level_display }}{% if signup.isGoalie == False %}| {% endif %}{% endif %}
+                                        {% if signup.isGoalie == False %}Prefers {{ signup.user.get_preferred_position_display }}{% endif %}
+                                    </small>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -78,7 +108,7 @@
         </table>
 
         {% csrf_token %}
-        <div class="container-fluid p-0" id="message">
+        <div class="messages-container" id="message">
             <div class="alert alert-dismissible" role="alert">
                 <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="messageClose">
                     <span aria-hidden="true">X</span>

@@ -1,5 +1,5 @@
 {% for message in messages %}
-  <div class="container-fluid p-0" id="message{{ forloop.counter }}">
+  <div class="container-fluid" id="message{{ forloop.counter }}">
     <div class="alert {{ message.tags }} alert-dismissible" role="alert">
       <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="messageClose{{ forloop.counter }}">
         <span aria-hidden="true">X</span>

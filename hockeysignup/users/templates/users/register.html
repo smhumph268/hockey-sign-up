@@ -20,7 +20,7 @@
                         {% csrf_token %}
                         {% for field in form %}
                             <div>
-                                <p {% if field.errors %}class="text-danger"{% endif %}>{{ field.label }}: <br> {{ field }}
+                                <p {% if field.errors %}class="text-danger"{% endif %}>{{ field.label }}{% if field.label == "Skill level" %}<small> ({{ field.help_text }})</small>{% endif %}: <br> {{ field }}
                                 {% for error in field.errors %}
                                     <small>{{ error|escape }}</small>
                                 {% endfor %}

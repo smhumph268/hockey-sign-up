@@ -7,7 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 {% endblock extra_script_before_body %}
 {% block content %}
-    <div class="alert alert-success" role="alert" style="width: 75%; text-align: center; word-break: break-all; margin: auto; margin-top: 25px;">
+    <div class="alert alert-success welcome-banner" role="alert">
         <h3 style="text-align: center;">Welcome{% if user.is_authenticated %} {{ user.username }}{% endif %}!</h3>
     </div>
     <div class="bg-light dropin-div">
@@ -54,7 +54,7 @@
                             {% endif %}
                         </div>
                     {% endif %}
-                    <div class="container-fluid p-0" id="message-{{ dropin.id }}">
+                    <div class="messages-container" id="message-{{ dropin.id }}">
                         <div class="alert alert-dismissible" role="alert" id="message-div-{{ dropin.id }}">
                             <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" id="message-close-{{ dropin.id }}">
                                 <span aria-hidden="true">X</span>

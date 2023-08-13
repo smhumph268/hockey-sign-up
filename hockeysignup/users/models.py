@@ -2,6 +2,19 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
 
+SKILL_LEVEL_CHOICES = (
+    ('d', 'D'),
+    ('c', 'C'),
+    ('b', 'B')
+)
+
+PREFERRED_POSITION = (
+    ('forward', 'Forward'),
+    ('defense', 'Defense'),
+    ('goalie', 'Goalie')
+)
+
+
 class CustomUserManager(UserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -24,6 +37,8 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     credits = models.IntegerField(default=0)
+    skill_level = models.CharField(max_length=1, choices=SKILL_LEVEL_CHOICES, default='d', help_text='B is the highest level')
+    preferred_position = models.CharField(max_length=7, choices=PREFERRED_POSITION, default='forward')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
