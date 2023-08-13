@@ -122,3 +122,6 @@
 .player-details-text{
     font-size: 10px;
 }
+.details-save-button{
+    width: 25%!important;
+}

@@ -11,7 +11,11 @@
     {% if page_obj %}
         {% for dropin in page_obj %}
             <div class="bg-light dropin-div">
-                <h1 class="display-4">{{ dropin.datetime|date:"F j, Y, h:i A" }}</h1>
+                {% comment %}
+                    see the following for datetime formats:
+                    https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date
+                {% endcomment %}
+                <h1 class="display-4">{{ dropin.datetime|date:"F j, Y, g:i A" }}</h1>
                 <p class="lead">{{ dropin.name }} | {{ dropin.rink }}</p>
                 <hr class="my-4">
                 <p>
