@@ -256,7 +256,7 @@ class DropInDetailTests(TestCase):
         create_sign_up(drop_in, user, timezone.now(), False, False, False, False)
 
         # Login and view page as superuser
-        AHHHHHHHH = self.client.post(self.loginURL, {'username': superuser.username, 'password': superuser_password}, follow=True)
+        self.client.post(self.loginURL, {'username': superuser.username, 'password': superuser_password}, follow=True)
         response = self.client.get(reverse('dropins:detail', kwargs={'drop_in_id': drop_in.id}))
         # Verify that a superuser sees the signed-up user under the Unassigned Sign-Ups
         self.assertTrue(

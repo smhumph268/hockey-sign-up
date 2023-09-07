@@ -46,8 +46,7 @@
                                         {% if signup.user.id == user.id %}user-matches-requester{% endif %}"
                                 >
                                     <div class="list-group-item-contents">
-                                        {{ signup.user.first_name }} {{ signup.user.last_name }}
-                                        {% if signup.isGoalie == True %} (G){% endif %}
+                                        {{ signup.user.first_name }} {{ signup.user.last_name }} {% if signup.isGoalie == True %}(G){% endif %}
                                         <br>
                                         <small class="player-details-text">
                                             {% comment %}
@@ -74,8 +73,7 @@
                                     {% endif %}
                                 >
                                     <div class="list-group-item-contents">
-                                        {{ signup.user.first_name }} {{ signup.user.last_name }}
-                                        {% if signup.isGoalie == True %} (G){% endif %}
+                                        {{ signup.user.first_name }} {{ signup.user.last_name }} {% if signup.isGoalie == True %}(G){% endif %}
                                         <br>
                                         <small class="player-details-text">
                                             {% comment %}
@@ -115,8 +113,7 @@
                                     {% endif %}
                                 >
                                     <div class="list-group-item-contents">
-                                        {{ signup.user.first_name }} {{ signup.user.last_name }}
-                                        {% if signup.isGoalie == True %} (G){% endif %}
+                                        {{ signup.user.first_name }} {{ signup.user.last_name }} {% if signup.isGoalie == True %}(G){% endif %}
                                         <br>
                                         <small class="player-details-text">
                                             {% comment %}
