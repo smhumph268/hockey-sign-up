@@ -17,7 +17,10 @@
         <div class="header-text">
             <h1>{{ drop_in }}</h1>
             {% if user.is_superuser %}
-                <p><small >User's with a <span style="background-color:LightGreen">green background</span> are in the top 20 to sign up</small></p>
+                <p><small>User's with a <span class="in-top-x">green background</span> are in the top 20 to sign up</small></p>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <p><small>If you are rostered, your name will have a <span class="user-matches-requester">blue background</span></small></p>
             {% endif %}
         </div>
         <table class="centered-table">
@@ -33,10 +36,14 @@
                     <ul id="white-team" class="list-group justify-content-center align-items-center">
                         {% for signup in signups %}
                             {% if signup.isWhiteTeam == True and signup.rostered == True %}
-                                <li data-id="{{ signup.id }}" class="list-group-item list-group-item-action active col-md-6"
-                                    {% if signup.in_top_x == True and user.is_superuser %}
-                                        style="background-color:LightGreen"
-                                    {% endif %}
+                                <li data-id="{{ signup.id }}"
+                                    class="
+                                        list-group-item
+                                        list-group-item-action
+                                        active
+                                        col-md-6
+                                        {% if signup.in_top_x == True and user.is_superuser and not signup.user.id == user.id %}in-top-x{% endif %}
+                                        {% if signup.user.id == user.id %}user-matches-requester{% endif %}"
                                 >
                                     <div class="list-group-item-contents">
                                         {{ signup.user.first_name }} {{ signup.user.last_name }}

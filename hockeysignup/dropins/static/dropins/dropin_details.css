@@ -6,6 +6,12 @@
 .header-text{
     text-align:center;
 }
+.in-top-x{
+    background-color:LightGreen!important;
+}
+.user-matches-requester{
+    background-color:PowderBlue!important;
+}
 .list-group{
     --bs-list-group-color:var(--bs-body-color);
     --bs-list-group-bg:var(--bs-body-bg);
